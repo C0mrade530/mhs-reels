@@ -91,6 +91,20 @@ async function resolveUserId() {
   return CFG.userId;
 }
 
+/**
+ * Перед публикацией проверяем ссылку сами: Instagram на недоступном
+ * видео вернёт невнятный ERROR через минуту ожидания, а так мы узнаем
+ * причину сразу и по-человечески.
+ */
+async function ensureReachable(url) {
+  const res = await fetch(url, { method: 'HEAD', redirect: 'follow' });
+  if (!res.ok) throw new Error(`видео недоступно по ссылке: HTTP ${res.status} на ${url}`);
+  const type = res.headers.get('content-type') || '';
+  if (!type.startsWith('video/')) {
+    throw new Error(`по ссылке отдаётся не видео, а ${type || 'неизвестный тип'}: ${url}`);
+  }
+}
+
 /** Шаг 1. Создаём контейнер: Instagram сам скачает видео по ссылке. */
 async function createContainer(videoUrl, caption) {
   const params = new URLSearchParams({
@@ -138,7 +152,12 @@ function checkConfig({ requireCreds }) {
     if (!CFG.baseUrl) problems.push('нет MEDIA_BASE_URL');
     else if (!/^https:\/\//.test(CFG.baseUrl)) problems.push('MEDIA_BASE_URL должен быть https');
   }
-  if (!fs.existsSync(REELS)) problems.push('нет output/reels — сначала npm run reels');
+  // Локальные mp4 нужны только когда неоткуда взять ссылку: Instagram
+  // всё равно скачивает видео с хостинга, а не из этой папки. На
+  // GitHub Actions папки нет и быть не должно — видео в репозиторий не едет.
+  if (!CFG.baseUrl && !fs.existsSync(REELS)) {
+    problems.push('нет ни MEDIA_BASE_URL, ни локальной output/reels');
+  }
   return problems;
 }
 
@@ -153,19 +172,26 @@ function buildQueue() {
   const done = new Set(state.published.map((p) => p.id));
 
   return items
+    .filter((item) => !done.has(item.id))
     .map((item) => {
       const file = `reel-${pad3(item.id)}.mp4`;
+      const localPath = path.join(REELS, file);
       const captionFile = path.join(REELS, `reel-${pad3(item.id)}.txt`);
+      // Подпись берём из файла рядом с роликом, а если его нет —
+      // собираем из JSON ровно в том же виде, что и при сборке рилсов.
+      const caption = fs.existsSync(captionFile)
+        ? fs.readFileSync(captionFile, 'utf8').trim()
+        : `${item.title}\n\n${item.prompt}`;
       return {
         id: item.id,
         title: item.title,
         file,
-        localPath: path.join(REELS, file),
+        localPath,
+        hasLocal: fs.existsSync(localPath),
         url: `${CFG.baseUrl}/${file}`,
-        caption: fs.existsSync(captionFile) ? fs.readFileSync(captionFile, 'utf8') : item.prompt,
+        caption,
       };
-    })
-    .filter((r) => !done.has(r.id) && fs.existsSync(r.localPath));
+    });
 }
 
 /* ------------------------------------------------------------------ *
@@ -220,7 +246,10 @@ async function cmdNext({ confirm, count }) {
       line();
       console.log(c.warn('ПРОБНЫЙ ПРОГОН — ничего не публикуется'));
       console.log(`  ${c.b(reel.title)}`);
-      console.log(`  файл:    ${reel.file} ${c.dim(`(${(fs.statSync(reel.localPath).size / 1048576).toFixed(1)} МБ)`)}`);
+      const size = reel.hasLocal
+        ? `(${(fs.statSync(reel.localPath).size / 1048576).toFixed(1)} МБ)`
+        : '(локальной копии нет — берётся с хостинга)';
+      console.log(`  файл:    ${reel.file} ${c.dim(size)}`);
       console.log(`  ссылка:  ${reel.url || c.err('MEDIA_BASE_URL не задан')}`);
       console.log(`  подпись: ${reel.caption.slice(0, 90).replace(/\n/g, ' ')}…`);
       console.log(c.dim('\n  Опубликовать по-настоящему: npm run publish -- --next --confirm'));
@@ -231,6 +260,7 @@ async function cmdNext({ confirm, count }) {
     process.stdout.write(`${reel.title} · контейнер…`);
     const state = loadState();
     try {
+      await ensureReachable(reel.url);
       const containerId = await createContainer(reel.url, reel.caption);
       process.stdout.write(' обработка…');
       await waitReady(containerId);

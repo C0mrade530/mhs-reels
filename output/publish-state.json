@@ -1,1 +1,11 @@
-{"published":[],"failed":[]}
+{
+  "published": [
+    {
+      "id": 1,
+      "mediaId": "18114326558072572",
+      "file": "reel-001.mp4",
+      "at": "2026-08-26T21:08:24.884Z"
+    }
+  ],
+  "failed": []
+}

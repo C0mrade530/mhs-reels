@@ -32,9 +32,11 @@ jobs:
 
       - name: Опубликовать следующий ролик
         env:
+          # Единственный секрет, который нужно завести руками.
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
-          MEDIA_BASE_URL: ${{ secrets.MEDIA_BASE_URL }}
-          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          # Адрес хостинга секретом не является — держим его на виду.
+          MEDIA_BASE_URL: https://visionary-shortbread-915e49.netlify.app
+          # IG_USER_ID не нужен: скрипт спросит его у API по токену.
         run: node src/publish.js --next --confirm
 
       - name: Запомнить, что опубликовано

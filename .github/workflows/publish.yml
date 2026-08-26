@@ -1,0 +1,49 @@
+name: Публикация рилса
+
+# Instagram API не умеет отложенный постинг, поэтому расписание держит
+# GitHub: он всегда включён, и ноутбук для публикаций больше не нужен.
+# Время в cron — UTC. Москва = UTC+3.
+on:
+  schedule:
+    - cron: '0 9 * * *'   # 12:00 МСК
+    - cron: '0 12 * * *'  # 15:00 МСК
+    - cron: '0 15 * * *'  # 18:00 МСК
+  workflow_dispatch:      # кнопка «запустить сейчас» в интерфейсе GitHub
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # чтобы сохранять очередь обратно в репозиторий
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Установить зависимости
+        run: npm ci --omit=dev --ignore-scripts
+
+      - name: Опубликовать следующий ролик
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          MEDIA_BASE_URL: ${{ secrets.MEDIA_BASE_URL }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+        run: node src/publish.js --next --confirm
+
+      - name: Запомнить, что опубликовано
+        if: always()
+        run: |
+          if [[ -n "$(git status --porcelain output/publish-state.json)" ]]; then
+            git config user.name  "mhs-publisher"
+            git config user.email "actions@github.com"
+            git add output/publish-state.json
+            git commit -m "очередь: опубликован очередной ролик"
+            git push
+          fi

@@ -1,0 +1,17 @@
+{
+  "name": "mhs-prompt-cards",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Локальный генератор визуальных карточек 1080x1920 для Instagram/Reels из JSON со 100 промптами",
+  "type": "module",
+  "scripts": {
+    "render": "node src/render.js",
+    "validate": "node src/render.js --validate-only",
+    "reels": "node src/reels.js",
+    "hooks": "node src/hooks.js",
+    "publish": "node src/publish.js"
+  },
+  "dependencies": {
+    "playwright": "^1.56.0"
+  }
+}

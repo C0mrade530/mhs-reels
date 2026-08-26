@@ -1,0 +1,17 @@
+node_modules/
+.env
+output/cards/
+output/cards@2x/
+output/reels/
+output/previews/
+output/contact-sheet.png
+output/publish.log
+!output/publish-state.json
+audio/*.mp3
+audio/*.m4a
+audio/*.wav
+output/reels-build.log
+audio/*.flac
+audio/*.ogg
+audio/*.aac
+.DS_Store

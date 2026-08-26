@@ -1,0 +1,199 @@
+/* ------------------------------------------------------------------ *
+ *  Карточка 1080 x 1920 — тёмный минимализм под Instagram / Reels
+ * ------------------------------------------------------------------ */
+
+:root {
+  /* Значения ниже подставляет fit-алгоритм в render.js */
+  --title-size: 96px;
+  --prompt-size: 42px;
+  --skull-size: 230px;
+
+  --bg: #000000;
+  --title-color: #ffffff;
+  --mhs-color: #b7b7bd;
+
+  --card-bg: #1c1c1e;
+  --card-stroke: #2b2b2e;
+  --prompt-color: #f2f2f4;
+
+  --btn-neutral: #2c2c2e;
+  --btn-neutral-glyph: #e8e8ed;
+  --btn-close: #3a3a3c;
+  --btn-close-glyph: #a7a7ad;
+  --btn-send: #00bd7e;
+
+  /* Геометрия сцены.
+     Поля = safe zone: Instagram подрезает края в ленте и накрывает
+     верх/низ своим интерфейсом в Stories и Reels. Всё значимое
+     держим внутри этих отступов. */
+  --pad-top: 212px;
+  --pad-bottom: 190px;
+  --pad-side: 84px;
+  --card-radius: 46px;
+  --card-pad: 40px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 1080px;
+  height: 1920px;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.stage {
+  width: 1080px;
+  height: 1920px;
+  background: var(--bg);
+  padding: var(--pad-top) var(--pad-side) var(--pad-bottom);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ----------------------------- Заголовок ---------------------------- */
+
+.header {
+  flex: 0 0 auto;
+  text-align: center;
+}
+
+.title {
+  font-family: 'MHS Display', 'Roboto Condensed', 'Arial Narrow', sans-serif;
+  font-variation-settings: 'wdth' 76, 'wght' 900;
+  font-weight: 900;
+  font-size: var(--title-size);
+  line-height: 1.02;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  color: var(--title-color);
+  white-space: nowrap;
+}
+
+.mhs {
+  margin-top: 26px;
+  font-family: 'MHS Text', 'Inter', -apple-system, sans-serif;
+  font-variation-settings: 'wght' 600;
+  font-size: 27px;
+  line-height: 1;
+  letter-spacing: 0.42em;
+  /* letter-spacing вешает пустоту справа от последней буквы —
+     компенсируем padding'ом, иначе строка визуально уедет влево */
+  padding-left: 0.42em;
+  text-transform: uppercase;
+  color: var(--mhs-color);
+}
+
+/* ------------------------------- Череп ------------------------------ */
+
+.middle {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.skull {
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+  font-size: var(--skull-size);
+  line-height: 1;
+  user-select: none;
+}
+
+/* --------------------------- Поле промпта --------------------------- */
+
+.card {
+  flex: 0 0 auto;
+  background: var(--card-bg);
+  border: 1px solid var(--card-stroke);
+  border-radius: var(--card-radius);
+  padding: var(--card-pad);
+}
+
+.prompt {
+  font-family: 'MHS Text', 'Inter', -apple-system, sans-serif;
+  font-variation-settings: 'wght' 400;
+  font-size: var(--prompt-size);
+  line-height: 1.34;
+  color: var(--prompt-color);
+  text-align: left;
+  overflow-wrap: break-word;
+  hyphens: none;
+}
+
+/* Кнопка × «обтекается» текстом: укорачивает только первые строки */
+.close {
+  float: right;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--btn-close);
+  margin: 0 0 10px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close svg {
+  width: 24px;
+  height: 24px;
+  stroke: var(--btn-close-glyph);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  fill: none;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 38px;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.btn-plus {
+  width: 94px;
+  height: 94px;
+  border-radius: 30px;
+  background: var(--btn-neutral);
+}
+
+.btn-plus svg {
+  width: 40px;
+  height: 40px;
+  stroke: var(--btn-neutral-glyph);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  fill: none;
+}
+
+.btn-send {
+  width: 94px;
+  height: 94px;
+  border-radius: 30px;
+  background: var(--btn-send);
+}
+
+.btn-send svg {
+  width: 44px;
+  height: 44px;
+  fill: #ffffff;
+  transform: translateX(1px);
+}

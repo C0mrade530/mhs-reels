@@ -1,0 +1,79 @@
+[
+  {
+    "file": "funk-criminal.mp3",
+    "label": "FUNK CRIMINAL",
+    "duration": 8,
+    "starts": [
+      22,
+      52.5,
+      80.5,
+      10.5,
+      43,
+      70.5,
+      61.5,
+      35,
+      88.5
+    ]
+  },
+  {
+    "file": "montagem-pegadora.mp3",
+    "label": "MONTAGEM PEGADORA",
+    "duration": 9,
+    "starts": [
+      38,
+      25,
+      72,
+      63,
+      14.5,
+      82,
+      53.5,
+      91
+    ]
+  },
+  {
+    "file": "montagem-rugada.mp3",
+    "label": "MONTAGEM RUGADA",
+    "duration": 9,
+    "starts": [
+      23.5,
+      35,
+      78,
+      67,
+      14.5,
+      51.5
+    ]
+  },
+  {
+    "file": "no-batido.mp3",
+    "label": "NO BATIDO",
+    "duration": 7,
+    "starts": [
+      17.5,
+      47,
+      67,
+      74.5,
+      82,
+      54,
+      24.5,
+      10.5,
+      40,
+      33
+    ]
+  },
+  {
+    "file": "sempero.mp3",
+    "label": "SEMPERO",
+    "duration": 10,
+    "starts": [
+      87,
+      28.5,
+      68.5,
+      14,
+      38.5,
+      97,
+      58.5,
+      107,
+      48.5
+    ]
+  }
+]

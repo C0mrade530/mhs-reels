@@ -278,7 +278,7 @@ async function main() {
   line();
   const bytes = results.reduce((s, r) => s + fs.statSync(r.out).size, 0);
   console.log(c.b('ИТОГ'));
-  console.log(`  Роликов:      ${c.ok(String(results.length))} → output/reels/`);
+  console.log(`  Роликов:      ${c.ok(String(results.length))} → ${path.relative(projectDir, REELS)}/`);
   console.log(`  Формат:       ${V.width}×${V.height}, ${V.fps} fps, H.264 + AAC`);
   console.log(`  Длительность: ${Math.min(...results.map((r) => r.duration)).toFixed(1)}–${Math.max(
     ...results.map((r) => r.duration)

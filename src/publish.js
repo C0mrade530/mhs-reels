@@ -40,6 +40,10 @@ const CFG = {
   times: (process.env.POST_TIMES || '12:00,15:00,18:00').split(',').map((s) => s.trim()),
   shareToFeed: process.env.SHARE_TO_FEED !== 'false',
   host: detectHost(process.env.IG_ACCESS_TOKEN),
+  // Кадр для обложки, миллисекунды от начала ролика. По умолчанию нулевой
+  // кадр — а он у нас чёрный из-за фейда на старте, и в сетке профиля
+  // обложка выглядит пустой. Секунда — уже полностью проявившаяся карточка.
+  thumbOffset: Number(process.env.THUMB_OFFSET ?? 1000),
 };
 
 const API = (p) => `https://${CFG.host}/${CFG.version}/${p}`;
@@ -112,6 +116,7 @@ async function createContainer(videoUrl, caption) {
     video_url: videoUrl,
     caption,
     share_to_feed: String(CFG.shareToFeed),
+    thumb_offset: String(CFG.thumbOffset),
     access_token: CFG.token,
   });
   const body = await call(API(`${CFG.userId}/media`), { method: 'POST', body: params });
@@ -211,6 +216,7 @@ function cmdStatus() {
   console.log(`  Ошибок:        ${state.failed.length ? c.err(String(state.failed.length)) : '0'}`);
   console.log(`  Расписание:    ${CFG.times.join(', ')} ${c.dim(`(${perDay} раза в день, ${Intl.DateTimeFormat().resolvedOptions().timeZone})`)}`);
   console.log(`  Хост API:      ${CFG.host} ${c.dim(CFG.token ? '(по типу токена)' : '')}`);
+  console.log(`  Обложка:       кадр на ${(CFG.thumbOffset / 1000).toFixed(1)} с`);
   if (queue.length) {
     console.log(`  Хватит на:     ${Math.ceil(queue.length / perDay)} дн.`);
     console.log(`  Следующий:     ${queue[0].title} ${c.dim(`→ ${queue[0].file}`)}`);
@@ -252,6 +258,7 @@ async function cmdNext({ confirm, count }) {
       console.log(`  файл:    ${reel.file} ${c.dim(size)}`);
       console.log(`  ссылка:  ${reel.url || c.err('MEDIA_BASE_URL не задан')}`);
       console.log(`  подпись: ${reel.caption.slice(0, 90).replace(/\n/g, ' ')}…`);
+      console.log(`  обложка: кадр на ${(CFG.thumbOffset / 1000).toFixed(1)} с`);
       console.log(c.dim('\n  Опубликовать по-настоящему: npm run publish -- --next --confirm'));
       line();
       continue;

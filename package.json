@@ -9,7 +9,12 @@
     "validate": "node src/render.js --validate-only",
     "reels": "node src/reels.js",
     "hooks": "node src/hooks.js",
-    "publish": "node src/publish.js"
+    "publish": "node src/publish.js",
+    "radar": "node src/radar.js",
+    "radar:images": "node src/radar-images.js",
+    "radar:cards": "node src/render-radar.js",
+    "radar:reels": "node src/reels.js --series=radar",
+    "radar:publish": "node src/publish.js --series=radar"
   },
   "dependencies": {
     "playwright": "^1.56.0"

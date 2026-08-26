@@ -7,6 +7,13 @@ output/previews/
 output/contact-sheet.png
 output/publish.log
 !output/publish-state.json
+!output/radar-publish-state.json
+output/radar-cards/
+output/radar-cards@2x/
+output/radar-reels/
+output/radar-images/
+output/radar-candidates.json
+output/radar-build.log
 audio/*.mp3
 audio/*.m4a
 audio/*.wav

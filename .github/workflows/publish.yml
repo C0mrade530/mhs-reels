@@ -45,6 +45,7 @@ jobs:
           if [[ -n "$(git status --porcelain output/publish-state.json)" ]]; then
             git config user.name  "mhs-publisher"
             git config user.email "actions@github.com"
+            git pull --rebase --autostash origin main
             git add output/publish-state.json
             git commit -m "очередь: опубликован очередной ролик"
             git push

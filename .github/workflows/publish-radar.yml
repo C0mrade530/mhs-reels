@@ -1,0 +1,48 @@
+name: Публикация находки
+
+# Вторая рубрика, независимая очередь. Время в cron — UTC, Москва = UTC+3.
+on:
+  schedule:
+    - cron: '0 10 * * *'  # 13:00 МСК
+    - cron: '0 13 * * *'  # 16:00 МСК
+    - cron: '0 16 * * *'  # 19:00 МСК
+  workflow_dispatch:
+
+concurrency:
+  group: publish-radar
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Установить зависимости
+        run: npm ci --omit=dev --ignore-scripts
+
+      - name: Опубликовать следующую находку
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          MEDIA_BASE_URL: https://visionary-shortbread-915e49.netlify.app
+          RADAR_POST_TIMES: 13:00,16:00,19:00
+        run: node src/publish.js --series=radar --next --confirm
+
+      - name: Запомнить, что опубликовано
+        if: always()
+        run: |
+          if [[ -n "$(git status --porcelain output/radar-publish-state.json)" ]]; then
+            git config user.name  "mhs-publisher"
+            git config user.email "actions@github.com"
+            git pull --rebase --autostash origin main
+            git add output/radar-publish-state.json
+            git commit -m "очередь находок: опубликована очередная"
+            git push
+          fi

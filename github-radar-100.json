@@ -1,0 +1,1002 @@
+[
+  {
+    "id": 1,
+    "repo": "ollama/ollama",
+    "headline": "БОЛЬШЕ НЕ ПЛАТИ\nЗА CHATGPT",
+    "description": "Запускает GPT-подобные модели локально одной командой. Без подписки, без интернета, без передачи данных наружу.",
+    "stars": 179519,
+    "forks": 17572,
+    "about": "Get up and running with Kimi-K2.6, GLM-5.2, MiniMax, DeepSeek, gpt-oss, Qwen, Gemma and other models.",
+    "contributors": 614
+  },
+  {
+    "id": 2,
+    "repo": "n8n-io/n8n",
+    "headline": "РУТИНА БУДЕТ\nДЕЛАТЬСЯ САМА",
+    "description": "Визуальный конструктор: соединяешь сервисы стрелками, и рутина делается сама. Больше 400 интеграций и AI внутри.",
+    "stars": 202526,
+    "forks": 60405,
+    "about": "Fair-code workflow automation platform with native AI capabilities. Combine visual building with custom code, ",
+    "contributors": 773
+  },
+  {
+    "id": 3,
+    "repo": "browser-use/browser-use",
+    "headline": "AI САМ КЛИКАЕТ\nЗА ТЕБЯ",
+    "description": "Агент открывает сайты, жмёт кнопки и заполняет формы вместо тебя. Задачу ставишь обычными словами.",
+    "stars": 110903,
+    "forks": 12184,
+    "about": "Make websites accessible for AI agents. Automate tasks online with ease.",
+    "contributors": 355
+  },
+  {
+    "id": 4,
+    "repo": "immich-app/immich",
+    "headline": "ХВАТИТ ПЛАТИТЬ\nЗА GOOGLE PHOTOS",
+    "description": "Хранит фото и видео на своём сервере, ищет по лицам и местам. Приложения для iPhone и Android в комплекте.",
+    "stars": 112725,
+    "forks": 6732,
+    "about": "High performance self-hosted photo and video management solution.",
+    "contributors": 982
+  },
+  {
+    "id": 5,
+    "repo": "rustdesk/rustdesk",
+    "headline": "TEAMVIEWER\nБЕСПЛАТНО",
+    "description": "Удалённый доступ к компьютеру без лимитов и блокировок. Можно поднять свой сервер и ни от кого не зависеть.",
+    "stars": 121894,
+    "forks": 18670,
+    "about": "An open-source remote desktop application designed for self-hosting, as an alternative to TeamViewer.",
+    "contributors": 475
+  },
+  {
+    "id": 6,
+    "repo": "Stirling-Tools/Stirling-PDF",
+    "headline": "ПЛАТНЫЕ PDF-СЕРВИСЫ\nБОЛЬШЕ НЕ НУЖНЫ",
+    "description": "Режет, склеивает, сжимает, подписывает и распознаёт PDF прямо в браузере. Файлы не уходят на чужой сервер.",
+    "stars": 90489,
+    "forks": 8205,
+    "about": "Edit, merge, split, compress and OCR PDF files right in your browser.",
+    "contributors": 305
+  },
+  {
+    "id": 7,
+    "repo": "open-webui/open-webui",
+    "headline": "СВОЙ CHATGPT\nБЕЗ ПОДПИСКИ",
+    "description": "Чат как у ChatGPT, но работает с локальными моделями и любым API. Своя история, свои настройки, свои документы.",
+    "stars": 150025,
+    "forks": 21896,
+    "about": "User-friendly AI Interface (Supports Ollama, OpenAI API, ...)",
+    "contributors": 873
+  },
+  {
+    "id": 8,
+    "repo": "localsend/localsend",
+    "headline": "AIRDROP ДЛЯ\nВСЕХ УСТРОЙСТВ",
+    "description": "Передаёт файлы между телефоном и компьютером по вайфаю. Без интернета, без облака, без регистрации.",
+    "stars": 89443,
+    "forks": 4976,
+    "about": "An open-source cross-platform alternative to AirDrop",
+    "contributors": 239
+  },
+  {
+    "id": 9,
+    "repo": "microsoft/markitdown",
+    "headline": "AI НАКОНЕЦ ПРОЧТЁТ\nТВОИ ФАЙЛЫ",
+    "description": "Превращает Word, Excel, PowerPoint и PDF в чистый текст одной командой. Нейросеть наконец понимает твои файлы.",
+    "stars": 176476,
+    "forks": 12950,
+    "about": "Python tool for converting files and office documents to Markdown.",
+    "contributors": 84
+  },
+  {
+    "id": 10,
+    "repo": "AUTOMATIC1111/stable-diffusion-webui",
+    "headline": "MIDJOURNEY\nБЕСПЛАТНО",
+    "description": "Полноценная студия изображений на своём компьютере. Без подписок, лимитов и очередей.",
+    "stars": 164678,
+    "forks": 30560,
+    "about": "Stable Diffusion web UI",
+    "contributors": 638
+  },
+  {
+    "id": 11,
+    "repo": "janhq/jan",
+    "headline": "CHATGPT РАБОТАЕТ\nБЕЗ ИНТЕРНЕТА",
+    "description": "Десктопное приложение, которое работает полностью офлайн. Переписка остаётся на твоём компьютере.",
+    "stars": 44197,
+    "forks": 2991,
+    "about": "Jan is an open source alternative to ChatGPT that runs 100% offline on your computer.",
+    "contributors": 181
+  },
+  {
+    "id": 12,
+    "repo": "nocodb/nocodb",
+    "headline": "AIRTABLE\nБЕСПЛАТНО",
+    "description": "Превращает обычную базу в удобные таблицы с формами и связями. Команда работает вместе, платить не надо.",
+    "stars": 64747,
+    "forks": 5021,
+    "about": "A Free & Self-hostable Airtable Alternative",
+    "contributors": 352
+  },
+  {
+    "id": 13,
+    "repo": "RVC-Boss/GPT-SoVITS",
+    "headline": "ТВОЙ ГОЛОС\nЗА ОДНУ МИНУТУ",
+    "description": "Одной минуты записи хватает, чтобы озвучивать любой текст этим голосом. Поддерживает русский.",
+    "stars": 61253,
+    "forks": 6632,
+    "about": "1 min voice data can also be used to train a good TTS model! (few shot voice cloning)",
+    "contributors": 100
+  },
+  {
+    "id": 14,
+    "repo": "tw93/Pake",
+    "headline": "ЛЮБОЙ САЙТ СТАНЕТ\nПРИЛОЖЕНИЕМ",
+    "description": "Заворачивает любую веб-страницу в лёгкое десктопное приложение. Весит в разы меньше аналогов на Electron.",
+    "stars": 61085,
+    "forks": 12549,
+    "about": "Turn any webpage into a desktop app with one command.",
+    "contributors": 85
+  },
+  {
+    "id": 15,
+    "repo": "coollabsio/coolify",
+    "headline": "ХВАТИТ ПЛАТИТЬ\nЗА VERCEL",
+    "description": "Разворачивает сайты и приложения в один клик на твоём железе. Платить за хостинг по подписке больше не нужно.",
+    "stars": 61081,
+    "forks": 5358,
+    "about": "An open-source, self-hostable PaaS alternative to Vercel, Heroku & Netlify that lets you easily deploy static ",
+    "contributors": 720
+  },
+  {
+    "id": 16,
+    "repo": "excalidraw/excalidraw",
+    "headline": "СХЕМЫ БЕЗ\nРЕГИСТРАЦИИ",
+    "description": "Доска для быстрых набросков и диаграмм. Открыл, нарисовал, скинул ссылку — без регистрации.",
+    "stars": 130578,
+    "forks": 15009,
+    "about": "Virtual whiteboard for sketching hand-drawn like diagrams",
+    "contributors": 372
+  },
+  {
+    "id": 17,
+    "repo": "harry0703/MoneyPrinterTurbo",
+    "headline": "РОЛИК ИЗ ОДНОГО\nСЛОВА",
+    "description": "По ключевому слову собирает короткий ролик: сценарий, озвучка, подбор кадров и субтитры. Всё автоматически.",
+    "stars": 116884,
+    "forks": 17778,
+    "about": "Generate HD short videos from a topic or keyword with AI and automation.",
+    "contributors": 102
+  },
+  {
+    "id": 18,
+    "repo": "firecrawl/firecrawl",
+    "headline": "ЗАБЕРИ ДАННЫЕ\nС ЛЮБОГО САЙТА",
+    "description": "Обходит страницы и отдаёт чистый текст, готовый для нейросети. Справляется с JavaScript и защитой.",
+    "stars": 172778,
+    "forks": 9536,
+    "about": "The context API to search, scrape, and interact with the web at scale.",
+    "contributors": 171
+  },
+  {
+    "id": 19,
+    "repo": "Mintplex-Labs/anything-llm",
+    "headline": "AI ПРОЧИТАЕТ\nВСЕ ТВОИ ФАЙЛЫ",
+    "description": "Загружаешь папку с файлами и спрашиваешь по ним человеческим языком. Работает и с локальными моделями.",
+    "stars": 65247,
+    "forks": 7192,
+    "about": "Stop renting your intelligence. Own it with AnythingLLM. Everything you need for a powerful local-first agent ",
+    "contributors": 230
+  },
+  {
+    "id": 20,
+    "repo": "usememos/memos",
+    "headline": "ЗАМЕТКИ, КОТОРЫЕ\nНИКТО НЕ ЧИТАЕТ",
+    "description": "Лёгкий сервис быстрых записей на своём сервере. Markdown, теги, поиск — и никто не читает твои мысли.",
+    "stars": 62559,
+    "forks": 4700,
+    "about": "Open-source, self-hosted note-taking tool built for quick capture. Markdown-native, lightweight, and fully you",
+    "contributors": 388
+  },
+  {
+    "id": 21,
+    "repo": "makeplane/plane",
+    "headline": "JIRA БЕСПЛАТНО\nИ БЕЗ ЛИМИТОВ",
+    "description": "Задачи, спринты, дорожные карты и циклы для команды. Ставится на свой сервер, лимитов по людям нет.",
+    "stars": 58353,
+    "forks": 5529,
+    "about": "Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a modern project management platform to ma",
+    "contributors": 161
+  },
+  {
+    "id": 22,
+    "repo": "hoppscotch/hoppscotch",
+    "headline": "POSTMAN\nБЕСПЛАТНО",
+    "description": "Тестирует запросы к API прямо в браузере. Быстрее оригинала и не просит платить за команду.",
+    "stars": 80099,
+    "forks": 6057,
+    "about": "Open-Source API Development Ecosystem • https://hoppscotch.io • Offline, On-Prem & Cloud • Web, Desktop & CLI ",
+    "contributors": 353
+  },
+  {
+    "id": 23,
+    "repo": "OpenHands/OpenHands",
+    "headline": "AI ЗАКРОЕТ\nТВОЮ ЗАДАЧУ",
+    "description": "Агент читает задачу, правит файлы, запускает тесты и чинит ошибки сам. Работает с твоим репозиторием.",
+    "stars": 85193,
+    "forks": 11136,
+    "about": "OpenHands: AI-Driven Development",
+    "contributors": 534
+  },
+  {
+    "id": 24,
+    "repo": "opendatalab/MinerU",
+    "headline": "PDF ПРЕВРАТИТСЯ\nВ ЧИСТЫЙ ТЕКСТ",
+    "description": "Разбирает сложные документы с таблицами и формулами в аккуратный markdown. Спасает научные статьи и отчёты.",
+    "stars": 78553,
+    "forks": 6603,
+    "about": "Transforms complex documents like PDFs and Office docs into LLM-ready markdown/JSON for your Agentic workflows",
+    "contributors": 99
+  },
+  {
+    "id": 25,
+    "repo": "ChatGPTNextWeb/NextChat",
+    "headline": "СВОЙ CHATGPT\nЗА ПЯТЬ МИНУТ",
+    "description": "Разворачивается в один клик и работает на всех платформах. Свой ключ, свои лимиты, свой дизайн.",
+    "stars": 88649,
+    "forks": 59201,
+    "about": "Light and Fast AI Assistant. Support: Web | iOS | MacOS | Android | Linux | Windows",
+    "contributors": 304
+  },
+  {
+    "id": 26,
+    "repo": "louislam/uptime-kuma",
+    "headline": "УЗНАЕШЬ О ПАДЕНИИ\nРАНЬШЕ КЛИЕНТА",
+    "description": "Следит за сайтами и сервисами круглосуточно и шлёт уведомление в телеграм. Красивая страница статуса в подарок.",
+    "stars": 90645,
+    "forks": 8296,
+    "about": "A fancy self-hosted monitoring tool",
+    "contributors": 1123
+  },
+  {
+    "id": 27,
+    "repo": "langgenius/dify",
+    "headline": "AI-БОТ БЕЗ\nПРОГРАММИСТА",
+    "description": "Собираешь чат-бота или агента мышкой и сразу получаешь готовый API. Подключается к любым моделям.",
+    "stars": 153591,
+    "forks": 24273,
+    "about": "Build Agentic workflows, RAG pipelines, with rich AI model and tool support on one collaborative workspace. De",
+    "contributors": 1445
+  },
+  {
+    "id": 28,
+    "repo": "babysor/MockingBird",
+    "headline": "ГОЛОС КЛОНИРУЕТСЯ\nЗА ПЯТЬ СЕКУНД",
+    "description": "Пяти секунд записи достаточно, чтобы синтезировать речь этим голосом в реальном времени.",
+    "stars": 36909,
+    "forks": 5185,
+    "about": "Clone a voice in 5 seconds to generate arbitrary speech in real-time",
+    "contributors": 41
+  },
+  {
+    "id": 29,
+    "repo": "amruthpillai/reactive-resume",
+    "headline": "РЕЗЮМЕ БЕЗ\nВОДЯНЫХ ЗНАКОВ",
+    "description": "Конструктор резюме с готовыми шаблонами и экспортом в PDF. Полностью бесплатно и без сбора твоих данных.",
+    "stars": 41780,
+    "forks": 4670,
+    "about": "A one-of-a-kind resume builder that keeps your privacy in mind. Completely secure, customizable, portable, ope",
+    "contributors": 244
+  },
+  {
+    "id": 30,
+    "repo": "ShareX/ShareX",
+    "headline": "ЗАПИСЬ ЭКРАНА\nБЕЗ ВОДЯНОГО ЗНАКА",
+    "description": "Снимает экран, пишет видео и гифки, сразу заливает и копирует ссылку. Настраивается под любой сценарий.",
+    "stars": 39319,
+    "forks": 3905,
+    "about": "ShareX is a free and open-source application that enables users to capture or record any area of their screen ",
+    "contributors": 300
+  },
+  {
+    "id": 31,
+    "repo": "Aider-AI/aider",
+    "headline": "AI ПИШЕТ КОД\nПРЯМО В ТЕРМИНАЛЕ",
+    "description": "Правит твой код по описанию задачи и сам делает коммиты. Видит весь проект целиком, а не один файл.",
+    "stars": 48512,
+    "forks": 4891,
+    "about": "aider is AI pair programming in your terminal",
+    "contributors": 182
+  },
+  {
+    "id": 32,
+    "repo": "photoprism/photoprism",
+    "headline": "ФОТОАРХИВ БЕЗ\nЧУЖОГО ОБЛАКА",
+    "description": "Сам разбирает фотографии по людям, местам и событиям. Работает на своём сервере, даже без интернета.",
+    "stars": 40112,
+    "forks": 2314,
+    "about": "AI-Powered Photos App",
+    "contributors": 196
+  },
+  {
+    "id": 33,
+    "repo": "Dokploy/dokploy",
+    "headline": "NETLIFY ЗА ЦЕНУ\nОДНОГО VPS",
+    "description": "Панель для деплоя приложений и баз данных на собственном сервере. Ставится одной командой.",
+    "stars": 36887,
+    "forks": 2918,
+    "about": "Open Source Alternative to Vercel, Netlify and Heroku.",
+    "contributors": 382
+  },
+  {
+    "id": 34,
+    "repo": "PDFMathTranslate/PDFMathTranslate",
+    "headline": "PDF ПЕРЕВЕДЁТСЯ\nБЕЗ ПОТЕРИ ВЁРСТКИ",
+    "description": "Переводит документ, не ломая таблицы, формулы и колонки. На выходе — тот же файл, но на нужном языке.",
+    "stars": 36367,
+    "forks": 3247,
+    "about": "Translate PDF papers while keeping the original layout, tables and formulas.",
+    "contributors": 58
+  },
+  {
+    "id": 35,
+    "repo": "chatwoot/chatwoot",
+    "headline": "ХВАТИТ ПЛАТИТЬ\nЗА INTERCOM",
+    "description": "Чат на сайте, почта и мессенджеры в одном окне поддержки. Ставится на свой сервер, без платы за оператора.",
+    "stars": 36243,
+    "forks": 8717,
+    "about": "Open-source live-chat, email support, omni-channel desk. An alternative to Intercom, Zendesk, Salesforce Servi",
+    "contributors": 383
+  },
+  {
+    "id": 36,
+    "repo": "khoj-ai/khoj",
+    "headline": "ВТОРОЙ МОЗГ\nБЕСПЛАТНО",
+    "description": "Ищет ответы по твоим заметкам, документам и интернету сразу. Живёт на своём сервере и помнит контекст.",
+    "stars": 36730,
+    "forks": 2409,
+    "about": "Your AI second brain. Self-hostable. Get answers from the web or your docs. Build custom agents, schedule auto",
+    "contributors": 76
+  },
+  {
+    "id": 37,
+    "repo": "ocrmypdf/OCRmyPDF",
+    "headline": "ПОИСК ЗАРАБОТАЕТ\nВНУТРИ СКАНОВ",
+    "description": "Добавляет текстовый слой в отсканированные PDF. Документ становится копируемым и находимым поиском.",
+    "stars": 34590,
+    "forks": 2395,
+    "about": "OCRmyPDF adds an OCR text layer to scanned PDF files, allowing them to be searched",
+    "contributors": 124
+  },
+  {
+    "id": 38,
+    "repo": "dgtlmoon/changedetection.io",
+    "headline": "УЗНАЕШЬ О СМЕНЕ\nЦЕНЫ ПЕРВЫМ",
+    "description": "Следит за страницей и пишет, когда меняется цена, наличие или текст. Работает даже там, где нет уведомлений.",
+    "stars": 33354,
+    "forks": 1975,
+    "about": "Best and simplest tool for website change detection, web page monitoring, and website change alerts. Perfect f",
+    "contributors": 150
+  },
+  {
+    "id": 39,
+    "repo": "twentyhq/twenty",
+    "headline": "SALESFORCE\nБЕСПЛАТНО",
+    "description": "Современная CRM для сделок и контактов с открытым кодом. Ставится на свой сервер и не берёт за пользователя.",
+    "stars": 55597,
+    "forks": 8711,
+    "about": "The open alternative to Salesforce, designed for AI.",
+    "contributors": 718
+  },
+  {
+    "id": 40,
+    "repo": "go-gitea/gitea",
+    "headline": "СВОЙ GITHUB\nЗА ПЯТЬ МИНУТ",
+    "description": "Репозитории, задачи, ревью и CI в одном лёгком приложении. Запускается даже на самом дешёвом VPS.",
+    "stars": 57622,
+    "forks": 7069,
+    "about": "Git with a cup of tea! Painless self-hosted all-in-one software development service, including Git hosting, co",
+    "contributors": 1828
+  },
+  {
+    "id": 41,
+    "repo": "mudler/LocalAI",
+    "headline": "OPENAI API\nУ СЕБЯ ДОМА",
+    "description": "Поднимает API, совместимый с OpenAI, но на локальных моделях. Существующий код продолжает работать без правок.",
+    "stars": 48695,
+    "forks": 4393,
+    "about": "LocalAI is the open-source AI engine. Run any model - LLMs, vision, voice, image, video - on any hardware. No ",
+    "contributors": 238
+  },
+  {
+    "id": 42,
+    "repo": "Comfy-Org/ComfyUI",
+    "headline": "ГЕНЕРАЦИЯ БЕЗ\nЛИМИТОВ И ОЧЕРЕДЕЙ",
+    "description": "Собираешь пайплайн картинок и видео из блоков и получаешь повторяемый результат. Стандарт индустрии.",
+    "stars": 130145,
+    "forks": 15339,
+    "about": "The most powerful and modular diffusion model GUI, api and backend with a graph/nodes interface.",
+    "contributors": 339
+  },
+  {
+    "id": 43,
+    "repo": "ToolJet/ToolJet",
+    "headline": "АДМИНКА БЕЗ\nПРОГРАММИСТА",
+    "description": "Собираешь внутренний интерфейс мышкой и подключаешь к базе или API. Без фронтенда и без верстальщика.",
+    "stars": 40769,
+    "forks": 5416,
+    "about": "ToolJet is the open-source foundation of ToolJet AI - the enterprise app generation platform for building inte",
+    "contributors": 681
+  },
+  {
+    "id": 44,
+    "repo": "gethomepage/homepage",
+    "headline": "ВСЕ ТВОИ СЕРВИСЫ\nНА ОДНОМ ЭКРАНЕ",
+    "description": "Стартовая страница со всеми твоими сервисами, погодой и лентами. Настраивается одним файлом.",
+    "stars": 32254,
+    "forks": 2082,
+    "about": "A highly customizable homepage (or startpage / application dashboard) with Docker and service API integrations",
+    "contributors": 513
+  },
+  {
+    "id": 45,
+    "repo": "paperless-ngx/paperless-ngx",
+    "headline": "БУМАГИ НАЙДУТСЯ\nЗА СЕКУНДУ",
+    "description": "Сканируешь бумагу — система распознаёт, раскладывает по тегам и находит за секунду. Прощай, папка со счетами.",
+    "stars": 44619,
+    "forks": 3060,
+    "about": "A community-supported supercharged document management system: scan, index and archive all your documents",
+    "contributors": 453
+  },
+  {
+    "id": 46,
+    "repo": "usebruno/bruno",
+    "headline": "POSTMAN БЕЗ\nЧУЖОГО ОБЛАКА",
+    "description": "Тестирует API и хранит коллекции прямо в репозитории. Ничего не улетает на чужие серверы.",
+    "stars": 46565,
+    "forks": 2819,
+    "about": "Opensource IDE For Exploring and Testing API's (lightweight alternative to Postman/Insomnia)",
+    "contributors": 478
+  },
+  {
+    "id": 47,
+    "repo": "siyuan-note/siyuan",
+    "headline": "NOTION БЕЗ\nПОДПИСКИ",
+    "description": "Блочные заметки со связями и графом, как в дорогих сервисах. Данные лежат у тебя в обычных файлах.",
+    "stars": 45994,
+    "forks": 2963,
+    "about": "An open-source, privacy-first, self-hosted knowledge workspace where humans and AI agents work together 开源、隐私优",
+    "contributors": 118
+  },
+  {
+    "id": 48,
+    "repo": "filebrowser/filebrowser",
+    "headline": "ФАЙЛЫ СЕРВЕРА\nЧЕРЕЗ БРАУЗЕР",
+    "description": "Загружай, редактируй и делись файлами через веб-интерфейс. Один бинарник, никаких зависимостей.",
+    "stars": 35949,
+    "forks": 4027,
+    "about": "File Browser provides a file managing interface within a specified directory and it can be used to upload, del",
+    "contributors": 261
+  },
+  {
+    "id": 49,
+    "repo": "D4Vinci/Scrapling",
+    "headline": "ПАРСЕР, КОТОРЫЙ\nНЕ ЛОМАЕТСЯ",
+    "description": "Скрейпер сам подстраивается, когда вёрстка сайта поменялась. Обходит защиту и не требует правок каждую неделю.",
+    "stars": 76649,
+    "forks": 7662,
+    "about": "An adaptive Web Scraping framework that handles everything from a single request to a full-scale crawl!",
+    "contributors": 32
+  },
+  {
+    "id": 50,
+    "repo": "danny-avila/LibreChat",
+    "headline": "ВСЕ НЕЙРОСЕТИ\nВ ОДНОМ ОКНЕ",
+    "description": "Один интерфейс для GPT, Claude, Gemini и локальных моделей. С агентами, поиском и загрузкой файлов.",
+    "stars": 42485,
+    "forks": 8813,
+    "about": "Enhanced ChatGPT Clone: Features Agents, MCP, Skills, DeepSeek, Anthropic, AWS, OpenAI, Responses API, Azure, ",
+    "contributors": 396
+  },
+  {
+    "id": 51,
+    "repo": "CherryHQ/cherry-studio",
+    "headline": "300 AI-АССИСТЕНТОВ\nБЕСПЛАТНО",
+    "description": "Десктопное приложение с сотнями готовых ассистентов и своей базой знаний. Windows, macOS и Linux.",
+    "stars": 51100,
+    "forks": 4877,
+    "about": "AI productivity studio with smart chat, autonomous agents, and 300+ assistants. Unified access to frontier LLM",
+    "contributors": 437
+  },
+  {
+    "id": 52,
+    "repo": "huginn/huginn",
+    "headline": "СВОЙ IFTTT\nБЕЗ ЛИМИТОВ",
+    "description": "Создаёшь наблюдателей за сайтами, ценами и лентами, и они действуют сами. Свой личный IFTTT без лимитов.",
+    "stars": 49856,
+    "forks": 4303,
+    "about": "Create agents that monitor and act on your behalf. Your agents are standing by!",
+    "contributors": 262
+  },
+  {
+    "id": 53,
+    "repo": "ScrapeGraphAI/Scrapegraph-ai",
+    "headline": "ПАРСИНГ ОБЫЧНЫМИ\nСЛОВАМИ",
+    "description": "Говоришь, что нужно достать со страницы, — нейросеть сама разбирает вёрстку. Селекторы писать не надо.",
+    "stars": 29952,
+    "forks": 2975,
+    "about": "Python scraper based on AI",
+    "contributors": 130
+  },
+  {
+    "id": 54,
+    "repo": "TriliumNext/Trilium",
+    "headline": "БАЗА ЗНАНИЙ\nБЕЗ ПОДПИСКИ",
+    "description": "База знаний с деревом заметок, связями и версиями. Держит десятки тысяч записей и не тормозит.",
+    "stars": 37602,
+    "forks": 2522,
+    "about": "Build your personal knowledge base with Trilium Notes",
+    "contributors": 435
+  },
+  {
+    "id": 55,
+    "repo": "directus/directus",
+    "headline": "АДМИНКА ПОВЕРХ\nЛЮБОЙ БАЗЫ",
+    "description": "Подключается к существующей базе и сразу даёт админку и API. Ничего переносить не нужно.",
+    "stars": 37599,
+    "forks": 4909,
+    "about": "The flexible backend for all your projects Turn your DB into a headless CMS, admin panels, or apps with a cust",
+    "contributors": 576
+  },
+  {
+    "id": 56,
+    "repo": "2noise/ChatTTS",
+    "headline": "ОЗВУЧКА, ПОХОЖАЯ\nНА ЖИВУЮ",
+    "description": "Синтез речи с паузами, смешками и естественной интонацией. Годится для роликов и озвучки текстов.",
+    "stars": 39797,
+    "forks": 4256,
+    "about": "A generative speech model for daily dialogue.",
+    "contributors": 59
+  },
+  {
+    "id": 57,
+    "repo": "songquanpeng/one-api",
+    "headline": "ВСЕ AI-КЛЮЧИ\nВ ОДНОМ МЕСТЕ",
+    "description": "Один шлюз для всех провайдеров с лимитами и учётом расходов. Видно, куда уходят деньги за токены.",
+    "stars": 36590,
+    "forks": 6830,
+    "about": "LLM API 管理 & 分发系统，支持 OpenAI、Azure、Anthropic Claude、Google Gemini、DeepSeek、字节豆包、ChatGLM、文心一言、讯飞星火、通义千问、360 智脑、腾",
+    "contributors": 131
+  },
+  {
+    "id": 58,
+    "repo": "sxyazi/yazi",
+    "headline": "ФАЙЛОВЫЙ МЕНЕДЖЕР,\nКОТОРЫЙ ЛЕТАЕТ",
+    "description": "Работает в терминале, показывает превью картинок и видео. Открывает папку с миллионом файлов мгновенно.",
+    "stars": 41704,
+    "forks": 995,
+    "about": "Blazing fast terminal file manager written in Rust, based on async I/O.",
+    "contributors": 185
+  },
+  {
+    "id": 59,
+    "repo": "lightpanda-io/browser",
+    "headline": "БРАУЗЕР ЛЕГЧЕ\nCHROME В ДЕСЯТКИ РАЗ",
+    "description": "В десятки раз легче обычного Chrome при тех же задачах. Экономит память и деньги на серверах.",
+    "stars": 34269,
+    "forks": 1613,
+    "about": "Lightpanda: the headless browser designed for AI and automation",
+    "contributors": 60
+  },
+  {
+    "id": 60,
+    "repo": "appsmithorg/appsmith",
+    "headline": "ДАШБОРД БЕЗ\nФРОНТЕНДА",
+    "description": "Дашборды и панели собираются перетаскиванием блоков. Подключается к 25 источникам данных.",
+    "stars": 40750,
+    "forks": 4739,
+    "about": "Platform to build admin panels, internal tools, and dashboards. Integrates with 25+ databases and any API.",
+    "contributors": 380
+  },
+  {
+    "id": 61,
+    "repo": "files-community/Files",
+    "headline": "ПРОВОДНИК WINDOWS\nС ВКЛАДКАМИ",
+    "description": "Вкладки, теги, двойная панель и нормальный поиск. Бесплатно и с открытым кодом.",
+    "stars": 44772,
+    "forks": 2843,
+    "about": "A modern file manager that helps users organize their files and folders.",
+    "contributors": 329
+  },
+  {
+    "id": 62,
+    "repo": "gogs/gogs",
+    "headline": "СВОЙ GIT НА\nСАМОМ СЛАБОМ VPS",
+    "description": "Хостинг репозиториев одним файлом, работает даже на слабом сервере. Ставится за пару минут.",
+    "stars": 47774,
+    "forks": 5076,
+    "about": "The painless way to host your own Git service",
+    "contributors": 578
+  },
+  {
+    "id": 63,
+    "repo": "BerriAI/litellm",
+    "headline": "СТО НЕЙРОСЕТЕЙ\nЧЕРЕЗ ОДИН КОД",
+    "description": "Единый формат вызова для всех провайдеров. Меняешь модель одной строкой, остальное не трогаешь.",
+    "stars": 57334,
+    "forks": 10916,
+    "about": "The fastest, litest AI Gateway. Rust core with Python SDK. Call 100+ LLM APIs in OpenAI (or native) format wit",
+    "contributors": 1635
+  },
+  {
+    "id": 64,
+    "repo": "docling-project/docling",
+    "headline": "AI ПЕРЕСТАНЕТ\nПУТАТЬСЯ В PDF",
+    "description": "Разбирает PDF и офисные файлы, сохраняя структуру и таблицы. Нейросеть перестаёт путаться в колонках.",
+    "stars": 65601,
+    "forks": 4696,
+    "about": "Get your documents ready for gen AI",
+    "contributors": 288
+  },
+  {
+    "id": 65,
+    "repo": "mem0ai/mem0",
+    "headline": "AI ЗАПОМНИТ\nТЕБЯ НАВСЕГДА",
+    "description": "Ассистент запоминает факты о тебе между сессиями. Больше не надо каждый раз объяснять контекст заново.",
+    "stars": 64112,
+    "forks": 7504,
+    "about": "Universal memory layer for AI Agents",
+    "contributors": 399
+  },
+  {
+    "id": 66,
+    "repo": "unslothai/unsloth",
+    "headline": "ОТВЕТЫ ПО СВОИМ\nДОКУМЕНТАМ",
+    "description": "Дообучение больших моделей в разы быстрее и с меньшей памятью. Влезает туда, где раньше не влезало.",
+    "stars": 74873,
+    "forks": 6780,
+    "about": "Local UI to run and train LLMs and diffusion models, including Qwen3.8, Kimi K3, MiniMax-H3, Gemma 4, DeepSeek",
+    "contributors": 296
+  },
+  {
+    "id": 67,
+    "repo": "hiyouga/LlamaFactory",
+    "headline": "ОБУЧИ МОДЕЛЬ НА\nОДНОЙ ВИДЕОКАРТЕ",
+    "description": "Дообучение сотни моделей через веб-интерфейс. Загрузил данные, нажал кнопку, забрал результат.",
+    "stars": 74382,
+    "forks": 9101,
+    "about": "Unified Efficient Fine-Tuning of 100+ LLMs & VLMs (ACL 2024)",
+    "contributors": 296
+  },
+  {
+    "id": 68,
+    "repo": "vllm-project/vllm",
+    "headline": "СВОЯ МОДЕЛЬ\nБЕЗ КОДА",
+    "description": "Движок, который выжимает из видеокарты максимум. Держит много запросов одновременно без просадок.",
+    "stars": 90144,
+    "forks": 21249,
+    "about": "A high-throughput and memory-efficient inference and serving engine for LLMs",
+    "contributors": 3294
+  },
+  {
+    "id": 69,
+    "repo": "run-llama/llama_index",
+    "headline": "МОДЕЛЬ ОТВЕТИТ\nВ РАЗЫ БЫСТРЕЕ",
+    "description": "Связывает нейросеть с твоими файлами и базами. Ответы со ссылками на источник, а не выдумки.",
+    "stars": 51883,
+    "forks": 8029,
+    "about": "LlamaIndex is the leading document agent and OCR platform",
+    "contributors": 1985
+  },
+  {
+    "id": 70,
+    "repo": "langflow-ai/langflow",
+    "headline": "AI-АГЕНТ\nИЗ КУБИКОВ",
+    "description": "Собираешь логику агента мышкой и сразу тестируешь в окне. Готовый результат отдаётся как API.",
+    "stars": 153718,
+    "forks": 9938,
+    "about": "Langflow is a powerful tool for building and deploying AI-powered agents and workflows.",
+    "contributors": 378
+  },
+  {
+    "id": 71,
+    "repo": "microsoft/autogen",
+    "headline": "КОМАНДА AI\nНА ОДНУ ЗАДАЧУ",
+    "description": "Несколько агентов обсуждают задачу между собой и приходят к решению. Каждому даёшь свою роль.",
+    "stars": 60642,
+    "forks": 9154,
+    "about": "A programming framework for agentic AI",
+    "contributors": 534
+  },
+  {
+    "id": 72,
+    "repo": "langchain-ai/langgraph",
+    "headline": "АГЕНТ, КОТОРЫЙ\nНЕ ЛОМАЕТСЯ",
+    "description": "Описываешь работу агента как схему шагов с ветвлениями. Процесс переживает ошибки и перезапуски.",
+    "stars": 40500,
+    "forks": 6829,
+    "about": "Build resilient agents.",
+    "contributors": 284
+  },
+  {
+    "id": 73,
+    "repo": "upstash/context7",
+    "headline": "AI ПЕРЕСТАНЕТ\nВЫДУМЫВАТЬ КОД",
+    "description": "Подсовывает нейросети актуальные доки библиотек. Код перестаёт быть написанным по версии двухлетней давности.",
+    "stars": 61264,
+    "forks": 2953,
+    "about": "Context7 Platform -- Up-to-date code documentation for LLMs and AI code editors",
+    "contributors": 131
+  },
+  {
+    "id": 74,
+    "repo": "CopilotKit/CopilotKit",
+    "headline": "AI-ПОМОЩНИК\nВНУТРИ ТВОЕГО САЙТА",
+    "description": "Готовые компоненты, чтобы встроить чат и автодействия в интерфейс. React, Angular и мобильные.",
+    "stars": 37063,
+    "forks": 4582,
+    "about": "The Frontend Stack for Agents & Generative UI. React, Angular, Mobile, Slack, and more. Makers of the AG-UI Pr",
+    "contributors": 231
+  },
+  {
+    "id": 75,
+    "repo": "onyx-dot-app/onyx",
+    "headline": "ПОИСК ПО ВСЕЙ\nКОМПАНИИ СРАЗУ",
+    "description": "Ищет ответы сразу по почте, документам и мессенджерам компании. Подключается к любой модели.",
+    "stars": 31775,
+    "forks": 4378,
+    "about": "Open Source AI Platform - AI Chat with advanced features that works with every LLM",
+    "contributors": 207
+  },
+  {
+    "id": 76,
+    "repo": "langfuse/langfuse",
+    "headline": "УВИДИШЬ, КУДА\nУХОДЯТ ТОКЕНЫ",
+    "description": "Логи, метрики и стоимость каждого запроса к модели. Понятно, где агент тупит и куда утекают деньги.",
+    "stars": 33766,
+    "forks": 3649,
+    "about": "Open source AI engineering platform: LLM evals, observability, metrics, prompt management, playground, dataset",
+    "contributors": 202
+  },
+  {
+    "id": 77,
+    "repo": "apache/airflow",
+    "headline": "ЗАДАЧИ ПО РАСПИСАНИЮ\nБЕЗ СБОЕВ",
+    "description": "Промышленный планировщик с историей запусков и перезапуском упавшего. Стандарт для регулярных процессов.",
+    "stars": 46611,
+    "forks": 17684,
+    "about": "Apache Airflow - A platform to programmatically author, schedule, and monitor workflows",
+    "contributors": 4570
+  },
+  {
+    "id": 78,
+    "repo": "fastlane/fastlane",
+    "headline": "РЕЛИЗ В СТОР\nОДНОЙ КОМАНДОЙ",
+    "description": "Скриншоты, подписи, сборка и выкладка в сторы автоматически. Экономит часы на каждом обновлении.",
+    "stars": 42025,
+    "forks": 6027,
+    "about": "The easiest way to automate building and releasing your iOS and Android apps",
+    "contributors": 1690
+  },
+  {
+    "id": 79,
+    "repo": "puppeteer/puppeteer",
+    "headline": "БРАУЗЕР ПОД\nПОЛНЫМ КОНТРОЛЕМ",
+    "description": "Управляй Chrome из кода: клики, формы, скриншоты, PDF. Основа для любой веб-автоматизации.",
+    "stars": 95497,
+    "forks": 9567,
+    "about": "JavaScript API for Chrome and Firefox",
+    "contributors": 567
+  },
+  {
+    "id": 80,
+    "repo": "microsoft/playwright",
+    "headline": "ТЕСТЫ ПЕРЕСТАНУТ\nПАДАТЬ СЛУЧАЙНО",
+    "description": "Автоматизация всех браузеров с записью действий и видео. Сам ждёт элементы вместо ручных пауз.",
+    "stars": 95179,
+    "forks": 6344,
+    "about": "Playwright is a framework for Web Testing and Automation. It allows testing Chromium, Firefox and WebKit with ",
+    "contributors": 795
+  },
+  {
+    "id": 81,
+    "repo": "scrapy/scrapy",
+    "headline": "ТЫСЯЧИ СТРАНИЦ\nЗА ОДИН ПРОХОД",
+    "description": "Обходит тысячи страниц параллельно с очередями и повторами. Проверен годами на больших объёмах.",
+    "stars": 64047,
+    "forks": 11920,
+    "about": "Scrapy, a fast high-level web crawling & scraping framework for Python.",
+    "contributors": 743
+  },
+  {
+    "id": 82,
+    "repo": "sharkdp/fd",
+    "headline": "ФАЙЛ НАЙДЁТСЯ\nЗА СЕКУНДУ",
+    "description": "Замена команде find с человеческим синтаксисом и скоростью. Ищет по всему диску мгновенно.",
+    "stars": 44211,
+    "forks": 1122,
+    "about": "A simple, fast and user-friendly alternative to 'find'",
+    "contributors": 237
+  },
+  {
+    "id": 83,
+    "repo": "ohmyzsh/ohmyzsh",
+    "headline": "ТЕРМИНАЛ СТАНЕТ\nУДОБНЫМ",
+    "description": "Автодополнение, подсказки и сотни готовых сокращений. Ставится одной строкой.",
+    "stars": 189395,
+    "forks": 26583,
+    "about": "A delightful community-driven (with 2,500+ contributors) framework for managing your zsh configuration. Includ",
+    "contributors": 2859
+  },
+  {
+    "id": 84,
+    "repo": "dokku/dokku",
+    "headline": "СВОЙ HEROKU\nНА ДЕШЁВОМ VPS",
+    "description": "Делаешь git push — приложение уже развёрнуто. Весь PaaS помещается на самый дешёвый сервер.",
+    "stars": 32111,
+    "forks": 2070,
+    "about": "A docker-powered PaaS that helps you build and manage the lifecycle of applications",
+    "contributors": 590
+  },
+  {
+    "id": 85,
+    "repo": "appwrite/appwrite",
+    "headline": "БЭКЕНД БЕЗ\nБЭКЕНДЕРА",
+    "description": "Авторизация, база, файлы и функции из коробки. Ставится на свой сервер, счета за облако не приходят.",
+    "stars": 57129,
+    "forks": 5671,
+    "about": "Appwrite® - complete cloud infrastructure for your web, mobile and AI apps. Including Auth, Databases, Storage",
+    "contributors": 446
+  },
+  {
+    "id": 86,
+    "repo": "strapi/strapi",
+    "headline": "CMS, КОТОРАЯ\nНЕ МЕШАЕТ",
+    "description": "Заводишь типы контента мышкой и получаешь готовый API. Фронтенд делаешь на чём хочешь.",
+    "stars": 73015,
+    "forks": 9850,
+    "about": "Strapi is the leading open-source headless CMS. It’s 100% JavaScript/TypeScript, fully customizable, and devel",
+    "contributors": 1380
+  },
+  {
+    "id": 87,
+    "repo": "refinedev/refine",
+    "headline": "АДМИНКА ЗА ЧАС\nВМЕСТО НЕДЕЛИ",
+    "description": "Каркас для внутренних панелей с готовыми таблицами и формами. Подключается к любому бэкенду.",
+    "stars": 35582,
+    "forks": 3197,
+    "about": "A React Framework for building internal tools, admin panels, dashboards & B2B apps with unmatched flexibility.",
+    "contributors": 328
+  },
+  {
+    "id": 88,
+    "repo": "SigNoz/signoz",
+    "headline": "ХВАТИТ ПЛАТИТЬ\nЗА DATADOG",
+    "description": "Метрики, логи и трейсы в одном месте на своём сервере. Счёт за мониторинг перестаёт расти.",
+    "stars": 31929,
+    "forks": 2447,
+    "about": "SigNoz is an open-source, OpenTelemetry-native observability platform for your team and their AI agents. Get l",
+    "contributors": 218
+  },
+  {
+    "id": 89,
+    "repo": "roboflow/supervision",
+    "headline": "ВИДЕО НАУЧИТСЯ\nСЧИТАТЬ ОБЪЕКТЫ",
+    "description": "Готовые инструменты для детекции, трекинга и подсчёта объектов на видео. Собирается из кубиков.",
+    "stars": 49744,
+    "forks": 4726,
+    "about": "We write your reusable computer vision tools.",
+    "contributors": 186
+  },
+  {
+    "id": 90,
+    "repo": "huggingface/diffusers",
+    "headline": "ГЕНЕРАЦИЯ КАРТИНОК\nИЗ ДВУХ СТРОК",
+    "description": "Все современные модели изображений и видео через единый интерфейс. Пара строк до первого результата.",
+    "stars": 34384,
+    "forks": 7267,
+    "about": "Diffusers: State-of-the-art diffusion models for image, video, and audio generation in PyTorch.",
+    "contributors": 1152
+  },
+  {
+    "id": 91,
+    "repo": "AstrBotDevs/AstrBot",
+    "headline": "ОДИН БОТ ВО ВСЕХ\nМЕССЕНДЖЕРАХ",
+    "description": "Один бот работает в телеграме, дискорде и остальных сразу. Плагины и своя логика внутри.",
+    "stars": 39647,
+    "forks": 2840,
+    "about": "AI Agent Assistant & development framework that integrates lots of IM platforms, LLMs, plugins and AI feature,",
+    "contributors": 348
+  },
+  {
+    "id": 92,
+    "repo": "feder-cr/Jobs_Applier_AI_Agent_AIHawk",
+    "headline": "ОТКЛИКИ НА ВАКАНСИИ\nУЙДУТ САМИ",
+    "description": "Агент ищет подходящие позиции и заполняет отклики за тебя. Резюме подстраивается под каждую вакансию.",
+    "stars": 30259,
+    "forks": 4643,
+    "about": "Open source AI job application bot in Python: browser automation and web scraping to read job postings, then a",
+    "contributors": 9
+  },
+  {
+    "id": 93,
+    "repo": "googleworkspace/cli",
+    "headline": "GMAIL И ДИСК\nИЗ ТЕРМИНАЛА",
+    "description": "Один инструмент для почты, календаря, таблиц и документов. Удобно вставлять в свои скрипты.",
+    "stars": 30577,
+    "forks": 1794,
+    "about": "Google Workspace CLI — one command-line tool for Drive, Gmail, Calendar, Sheets, Docs, Chat, Admin, and more. ",
+    "contributors": 43
+  },
+  {
+    "id": 94,
+    "repo": "glanceapp/glance",
+    "headline": "НОВОСТИ И ЛЕНТЫ\nБЕЗ СОЦСЕТЕЙ",
+    "description": "Новости, погода, календарь и статусы сервисов на одной странице. Настраивается одним конфигом.",
+    "stars": 36617,
+    "forks": 1431,
+    "about": "A self-hosted dashboard that puts all your feeds in one place",
+    "contributors": 89
+  },
+  {
+    "id": 95,
+    "repo": "hugohe3/ppt-master",
+    "headline": "ПРЕЗЕНТАЦИЯ\nИЗ ОДНОЙ ТЕМЫ",
+    "description": "AI собирает настоящий PowerPoint с фигурами и переходами, а не картинки. Дальше правишь как обычно.",
+    "stars": 49601,
+    "forks": 3996,
+    "about": "AI turns documents or topics into real, native PowerPoint decks—with native shapes, transitions and animations",
+    "contributors": 21
+  },
+  {
+    "id": 96,
+    "repo": "Panniantong/Agent-Reach",
+    "headline": "AI ПРОЧИТАЕТ\nСОЦСЕТИ ЗА ТЕБЯ",
+    "description": "Агент ищет и разбирает посты в твиттере, реддите и ютубе. Готовая сводка вместо часов листания.",
+    "stars": 75600,
+    "forks": 6459,
+    "about": "Give your AI agent eyes to see the entire internet. Read & search Twitter, Reddit, YouTube, GitHub, Bilibili, ",
+    "contributors": 36
+  },
+  {
+    "id": 97,
+    "repo": "OpenBMB/VoxCPM",
+    "headline": "ОЗВУЧКА НА\nЛЮБОМ ЯЗЫКЕ",
+    "description": "Синтез речи с созданием собственных голосов. Работает без предварительной разметки текста.",
+    "stars": 36144,
+    "forks": 4132,
+    "about": "VoxCPM2: Tokenizer-Free TTS for Multilingual Speech Generation, Creative Voice Design, and True-to-Life Clonin",
+    "contributors": 31
+  },
+  {
+    "id": 98,
+    "repo": "oobabooga/textgen",
+    "headline": "ЛОКАЛЬНАЯ МОДЕЛЬ\nС КАРТИНКАМИ",
+    "description": "Десктопное приложение для своих моделей: текст, зрение и вызов инструментов. Совместимо с OpenAI API.",
+    "stars": 47583,
+    "forks": 5983,
+    "about": "Open-source desktop app for local LLMs. Text, vision, tool-calling, OpenAI/Anthropic-compatible API. 100% priv",
+    "contributors": 394
+  },
+  {
+    "id": 99,
+    "repo": "DayuanJiang/next-ai-draw-io",
+    "headline": "СХЕМЫ НАРИСУЕТ\nAI",
+    "description": "Описываешь задачу словами — получаешь готовую диаграмму. Дальше правишь её руками как обычный файл draw.io.",
+    "stars": 35311,
+    "forks": 3790,
+    "about": "A next.js web application that integrates AI capabilities with draw.io diagrams. This app allows you to create",
+    "contributors": 62
+  },
+  {
+    "id": 100,
+    "repo": "HKUDS/nanobot",
+    "headline": "СВОЙ AI-АГЕНТ\nЗА ОДИН ВЕЧЕР",
+    "description": "Каркас личного агента, который влезает в один файл. Разберёшься за вечер и соберёшь под себя.",
+    "stars": 47425,
+    "forks": 8369,
+    "about": "Ultra-lightweight, open-source, self-hosted personal AI agent framework in Python with WebUI, tools, memory, M",
+    "contributors": 428
+  }
+]

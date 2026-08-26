@@ -6,8 +6,45 @@ import { findPromptsJson, validateAndFix, pad3 } from './utils.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const projectDir = path.resolve(here, '..');
-const REELS = path.join(projectDir, 'output', 'reels');
-const STATE = path.join(projectDir, 'output', 'publish-state.json');
+/* Рубрики публикуются независимо: у каждой свои файлы, своя очередь
+   и своё расписание. Хостинг общий — имена роликов не пересекаются. */
+const SERIES = {
+  prompts: {
+    reels: path.join(projectDir, 'output', 'reels'),
+    state: path.join(projectDir, 'output', 'publish-state.json'),
+    prefix: 'reel',
+    times: '12:00,15:00,18:00',
+    timesEnv: 'POST_TIMES',
+    title: 'Секретный промпт',
+    load: null,
+  },
+  radar: {
+    reels: path.join(projectDir, 'output', 'radar-reels'),
+    state: path.join(projectDir, 'output', 'radar-publish-state.json'),
+    prefix: 'radar',
+    times: '13:00,16:00,19:00',
+    timesEnv: 'RADAR_POST_TIMES',
+    title: 'GitHub-находка',
+    load: () => {
+      const items = JSON.parse(
+        fs.readFileSync(path.join(projectDir, 'github-radar-100.json'), 'utf8')
+      );
+      return items.map((i) => {
+        const n = i.id >= 100 ? String(i.id) : String(i.id).padStart(2, '0');
+        return { ...i, title: `GITHUB-НАХОДКА №${n}` };
+      });
+    },
+  },
+};
+
+const seriesArg = (process.argv.find((a) => a.startsWith('--series=')) || '').split('=')[1] || 'prompts';
+const S = SERIES[seriesArg];
+if (!S) {
+  console.error(`Неизвестная рубрика: ${seriesArg}. Доступны: ${Object.keys(SERIES).join(', ')}`);
+  process.exit(1);
+}
+const REELS = S.reels;
+const STATE = S.state;
 
 /* ------------------------------------------------------------------ *
  *  Конфигурация — только из окружения.
@@ -37,7 +74,7 @@ const CFG = {
   token: process.env.IG_ACCESS_TOKEN,
   baseUrl: (process.env.MEDIA_BASE_URL || '').replace(/\/+$/, ''),
   version: process.env.GRAPH_VERSION || 'v23.0',
-  times: (process.env.POST_TIMES || '12:00,15:00,18:00').split(',').map((s) => s.trim()),
+  times: (process.env[S.timesEnv] || S.times).split(',').map((s) => s.trim()),
   shareToFeed: process.env.SHARE_TO_FEED !== 'false',
   host: detectHost(process.env.IG_ACCESS_TOKEN),
   // Кадр для обложки, миллисекунды от начала ролика. По умолчанию нулевой
@@ -171,22 +208,23 @@ function checkConfig({ requireCreds }) {
  * ------------------------------------------------------------------ */
 
 function buildQueue() {
-  const found = findPromptsJson(projectDir);
-  const { items } = validateAndFix(found.data);
+  const items = S.load ? S.load() : validateAndFix(findPromptsJson(projectDir).data).items;
   const state = loadState();
   const done = new Set(state.published.map((p) => p.id));
 
   return items
     .filter((item) => !done.has(item.id))
     .map((item) => {
-      const file = `reel-${pad3(item.id)}.mp4`;
+      const file = `${S.prefix}-${pad3(item.id)}.mp4`;
       const localPath = path.join(REELS, file);
-      const captionFile = path.join(REELS, `reel-${pad3(item.id)}.txt`);
+      const captionFile = path.join(REELS, `${S.prefix}-${pad3(item.id)}.txt`);
       // Подпись берём из файла рядом с роликом, а если его нет —
       // собираем из JSON ровно в том же виде, что и при сборке рилсов.
       const caption = fs.existsSync(captionFile)
         ? fs.readFileSync(captionFile, 'utf8').trim()
-        : `${item.title}\n\n${item.prompt}`;
+        : [item.title, '', item.prompt || item.description, '', item.repo ? `github.com/${item.repo}` : '']
+            .join('\n')
+            .trim();
       return {
         id: item.id,
         title: item.title,
@@ -209,7 +247,7 @@ function cmdStatus() {
   const perDay = CFG.times.length;
 
   line();
-  console.log(c.b('MHS · очередь публикации'));
+  console.log(c.b(`MHS · очередь публикации · «${S.title}»`));
   line();
   console.log(`  Опубликовано:  ${c.ok(String(state.published.length))}`);
   console.log(`  В очереди:     ${c.b(String(queue.length))}`);

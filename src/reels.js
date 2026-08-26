@@ -10,9 +10,48 @@ const run = promisify(execFile);
 const here = path.dirname(fileURLToPath(import.meta.url));
 const projectDir = path.resolve(here, '..');
 
-const FRAMES = path.join(projectDir, 'output', 'cards@2x');
 const AUDIO = path.join(projectDir, 'audio');
-const REELS = path.join(projectDir, 'output', 'reels');
+
+/* Рубрики: у каждой свои кадры, своя папка роликов и своя подпись.
+   Общими остаются музыка, движение и параметры кодирования. */
+const SERIES = {
+  prompts: {
+    frames: path.join(projectDir, 'output', 'cards@2x'),
+    reels: path.join(projectDir, 'output', 'reels'),
+    prefix: 'reel',
+    framePrefix: 'secret-prompt',
+    caption: (item) => [item.title, '', item.prompt].join('\n').trim(),
+    load: null, // берётся из JSON с промптами
+  },
+  radar: {
+    frames: path.join(projectDir, 'output', 'radar-cards@2x'),
+    reels: path.join(projectDir, 'output', 'radar-reels'),
+    prefix: 'radar',
+    framePrefix: 'radar',
+    caption: (item) => {
+      const number = item.id >= 100 ? String(item.id) : String(item.id).padStart(2, '0');
+      return [
+        `GITHUB-НАХОДКА №${number}`,
+        '',
+        item.headline.replace(/\n/g, ' '),
+        '',
+        item.description,
+        '',
+        `github.com/${item.repo}`,
+      ].join('\n');
+    },
+    load: () => JSON.parse(fs.readFileSync(path.join(projectDir, 'github-radar-100.json'), 'utf8')),
+  },
+};
+
+const seriesArg = (process.argv.find((a) => a.startsWith('--series=')) || '').split('=')[1] || 'prompts';
+const S = SERIES[seriesArg];
+if (!S) {
+  console.error(`Неизвестная рубрика: ${seriesArg}. Доступны: ${Object.keys(SERIES).join(', ')}`);
+  process.exit(1);
+}
+const FRAMES = S.frames;
+const REELS = S.reels;
 
 /* ------------------------------------------------------------------ *
  *  Параметры видео под Instagram Reels
@@ -36,10 +75,8 @@ const V = {
  * Подпись к рилсу = сам промпт. Заголовок сверху для контекста.
  * FOOTER — место под хештеги и призыв, если понадобится.
  */
-const CAPTION_FOOTER = '';
-
 function buildCaption(item) {
-  return [item.title, '', item.prompt, CAPTION_FOOTER].join('\n').trim();
+  return S.caption(item);
 }
 
 /* ------------------------------------------------------------------ *
@@ -177,16 +214,15 @@ async function main() {
   const limit = limitArg ? Number(limitArg) : Infinity;
 
   line();
-  console.log(c.b('MHS · сборка Reels 1080×1920'));
+  console.log(c.b(`MHS · сборка Reels 1080×1920 · рубрика «${seriesArg}»`));
   line();
 
   if (!fs.existsSync(FRAMES)) {
-    console.error(c.err('Нет кадров output/cards@2x — сначала: npm run render -- --scale=2'));
+    console.error(c.err(`Нет кадров ${path.relative(projectDir, FRAMES)} — сначала отрендерьте их с --scale=2`));
     process.exit(1);
   }
 
-  const found = findPromptsJson(projectDir);
-  const { items } = validateAndFix(found.data);
+  const items = S.load ? S.load() : validateAndFix(findPromptsJson(projectDir).data).items;
 
   const tracks = loadTracks();
   if (tracks.length) {
@@ -210,16 +246,16 @@ async function main() {
 
   console.log('');
   for (const [i, item] of queue.entries()) {
-    const frame = path.join(FRAMES, `secret-prompt-${pad3(item.id)}.png`);
+    const frame = path.join(FRAMES, `${S.framePrefix}-${pad3(item.id)}.png`);
     if (!fs.existsSync(frame)) {
       problems.push(`#${item.id}: нет кадра ${path.basename(frame)}`);
       continue;
     }
     const track = pickCue(tracks, i);
-    const out = path.join(REELS, `reel-${pad3(item.id)}.mp4`);
+    const out = path.join(REELS, `${S.prefix}-${pad3(item.id)}.mp4`);
 
     await renderReel(frame, out, track);
-    fs.writeFileSync(path.join(REELS, `reel-${pad3(item.id)}.txt`), buildCaption(item), 'utf8');
+    fs.writeFileSync(path.join(REELS, `${S.prefix}-${pad3(item.id)}.txt`), buildCaption(item), 'utf8');
 
     const info = await probe(out);
     if (info.width !== V.width || info.height !== V.height)
@@ -247,7 +283,7 @@ async function main() {
   console.log(`  Длительность: ${Math.min(...results.map((r) => r.duration)).toFixed(1)}–${Math.max(
     ...results.map((r) => r.duration)
   ).toFixed(1)} с`);
-  console.log(`  Подписи:      reel-XXX.txt рядом с каждым mp4`);
+  console.log(`  Подписи:      ${S.prefix}-XXX.txt рядом с каждым mp4`);
   console.log(`  Объём:        ${(bytes / 1048576).toFixed(1)} МБ`);
   console.log(`  Время:        ${((Date.now() - t0) / 1000).toFixed(1)} с`);
 

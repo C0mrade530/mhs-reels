@@ -1,0 +1,70 @@
+name: Выгрузка на YouTube
+
+# Те же ролики, что уходят в Instagram. Очередь своя, поэтому площадки
+# не мешают друг другу. Квота YouTube — 10 000 единиц в сутки, одна
+# загрузка стоит 1600, то есть больше шести роликов в день не выйдет.
+on:
+  schedule:
+    - cron: '11,26,41,56 * * * *'
+  workflow_dispatch:
+    inputs:
+      series:
+        description: Рубрика
+        type: choice
+        options: [prompts, radar]
+        default: prompts
+
+concurrency:
+  group: youtube
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    strategy:
+      max-parallel: 1
+      matrix:
+        series: [prompts, radar]
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: 22 }
+      - run: npm ci --omit=dev --ignore-scripts
+
+      - name: Скачать ролики этой рубрики
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ "${{ matrix.series }}" == "radar" ]]; then
+            mkdir -p output/radar-reels/r-git && cd output/radar-reels/r-git
+            PREFIX=radar
+          else
+            mkdir -p output/reels && cd output/reels
+            PREFIX=reel
+          fi
+          # тянем только то, что реально пойдёт в загрузку
+          gh release download media-v1 --repo "$GITHUB_REPOSITORY" --pattern "$PREFIX-*.mp4" --clobber --skip-existing || true
+
+      - name: Загрузить следующий ролик
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+          YOUTUBE_PRIVACY: ${{ vars.YOUTUBE_PRIVACY || 'private' }}
+        run: node src/youtube.js --series=${{ matrix.series }} --next --confirm
+
+      - name: Запомнить загруженное
+        if: always()
+        run: |
+          F=output/youtube-state.json
+          [[ "${{ matrix.series }}" == "radar" ]] && F=output/youtube-radar-state.json
+          if [[ -n "$(git status --porcelain $F)" ]]; then
+            git config user.name  "mhs-publisher"
+            git config user.email "actions@github.com"
+            git pull --rebase --autostash origin main
+            git add $F && git commit -m "youtube: выгружен очередной ролик (${{ matrix.series }})"
+            git push
+          fi

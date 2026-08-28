@@ -8,6 +8,8 @@ output/contact-sheet.png
 output/publish.log
 !output/publish-state.json
 !output/radar-publish-state.json
+!output/youtube-state.json
+!output/youtube-radar-state.json
 output/radar-cards/
 output/radar-cards@2x/
 output/radar-reels/

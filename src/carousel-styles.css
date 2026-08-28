@@ -21,6 +21,8 @@
   --hook-size: 108px;
   --title-size: 72px;
   --text-size: 38px;
+  --bullet-size: 37px;
+  --quote-size: 84px;
 
   --pad-top: 110px;
   --pad-bottom: 120px;
@@ -367,8 +369,8 @@ body { -webkit-font-smoothing: antialiased; }
 [data-theme='blueprint'] .deco::after { bottom: 54px; }
 
 /* Боковые направляющие — рамка чертёжного листа */
-[data-theme='blueprint'] .stage::before,
-[data-theme='blueprint'] .stage::after {
+[data-theme='blueprint']::before,
+[data-theme='blueprint']::after {
   content: '';
   position: absolute;
   top: 54px;
@@ -377,8 +379,8 @@ body { -webkit-font-smoothing: antialiased; }
   background: rgba(27, 77, 255, 0.45);
   z-index: 1;
 }
-[data-theme='blueprint'] .stage::before { left: 54px; }
-[data-theme='blueprint'] .stage::after { right: 54px; }
+[data-theme='blueprint']::before { left: 54px; }
+[data-theme='blueprint']::after { right: 54px; }
 
 [data-theme='blueprint'] .top,
 [data-theme='blueprint'] .bottom { font-size: 23px; letter-spacing: 0.2em; }
@@ -408,8 +410,8 @@ body { -webkit-font-smoothing: antialiased; }
     repeating-linear-gradient(0deg, rgba(27, 77, 255, 0.34) 0 1px, transparent 1px 54px),
     repeating-linear-gradient(90deg, rgba(27, 77, 255, 0.34) 0 1px, transparent 1px 54px);
 }
-[data-theme='blueprint'][data-type='cta'] .stage::before,
-[data-theme='blueprint'][data-type='cta'] .stage::after { background: rgba(27, 77, 255, 0.6); }
+[data-theme='blueprint'][data-type='cta']::before,
+[data-theme='blueprint'][data-type='cta']::after { background: rgba(27, 77, 255, 0.6); }
 
 /* ================================================================== *
  *  4 · MARKER — белый лист, чёрный капс, синий хайлайтер
@@ -431,7 +433,7 @@ body { -webkit-font-smoothing: antialiased; }
   color: var(--white);
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
-  padding: 0.02em 0.14em 0.08em;
+  padding: 0 0.13em 0.04em;
   margin: 0 -0.05em;
 }
 
@@ -532,3 +534,160 @@ body { -webkit-font-smoothing: antialiased; }
 [data-theme='terminal'] .offer-item::before { width: 14px; height: 14px; }
 
 [data-theme='terminal'] .hook .hl { color: var(--accent); }
+
+/* ================================================================== *
+ *  6 · GRID — клетчатый лист, тяжёлый капс, инверсные плашки
+ *  Синий заменяет жёлтый: синие полосы — на белом, чёрные — на синем.
+ * ================================================================== */
+
+[data-theme='grid'] {
+  --bg: var(--white);
+  --fg: var(--black);
+  --dim: rgba(8, 8, 10, 0.74);
+  --rule: rgba(8, 8, 10, 0.12);
+  --grid-line: rgba(8, 8, 10, 0.09);
+  --arc: rgba(8, 8, 10, 0.16);
+}
+
+/* Цветные слайды: обложка, цитата, финал */
+[data-theme='grid'][data-type='cover'],
+[data-theme='grid'][data-type='quote'],
+[data-theme='grid'][data-type='cta'] {
+  --bg: var(--blue);
+  --fg: var(--white);
+  --dim: rgba(255, 255, 255, 0.86);
+  --rule: rgba(255, 255, 255, 0.24);
+  --grid-line: rgba(255, 255, 255, 0.13);
+  --arc: rgba(255, 255, 255, 0.42);
+  --accent: var(--white);
+  --on-accent: var(--blue);
+}
+
+[data-theme='grid'] .deco {
+  background-image:
+    repeating-linear-gradient(0deg, var(--grid-line) 0 1px, transparent 1px 54px),
+    repeating-linear-gradient(90deg, var(--grid-line) 0 1px, transparent 1px 54px);
+}
+
+/* Две дуги, уходящие за край — как в референсе */
+[data-theme='grid'] .deco::before,
+[data-theme='grid'] .deco::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  border: 3px solid var(--arc);
+}
+[data-theme='grid'] .deco::before { width: 940px; height: 940px; top: -660px; right: -340px; }
+[data-theme='grid'] .deco::after { width: 780px; height: 780px; bottom: -560px; left: -400px; }
+
+[data-theme='grid'][data-type='cover'] .deco::before,
+[data-theme='grid'][data-type='cover'] .deco::after { border-color: rgba(8, 8, 10, 0.9); }
+
+/* Шапка: как подпись в блокноте, без разрядки */
+[data-theme='grid'] .top {
+  font-variation-settings: 'wght' 500;
+  font-size: 27px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--dim);
+}
+[data-theme='grid'] .counter { color: var(--dim); font-variation-settings: 'wght' 500; }
+
+[data-theme='grid'] .hook {
+  font-variation-settings: 'wdth' 76, 'wght' 900;
+  line-height: 1.08;
+}
+
+/* Выделение: чёрная полоса на синем, синяя — на белом */
+[data-theme='grid'] .hook .hl,
+[data-theme='grid'] .title .hl,
+[data-theme='grid'] .bridge .hl,
+[data-theme='grid'] .quote .hl {
+  background: var(--black);
+  color: var(--white);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  /* плашка держится в пределах своей строки и не залезает на верхнюю */
+  padding: 0 0.12em 0.04em;
+  margin: 0 -0.05em;
+}
+
+[data-theme='grid'][data-type='point'] .title .hl,
+[data-theme='grid'][data-type='setup'] .title .hl,
+[data-theme='grid'][data-type='summary'] .title .hl {
+  background: var(--blue);
+  color: var(--white);
+}
+
+[data-theme='grid'] .title { line-height: 1.1; }
+[data-theme='grid'] .bridge { line-height: 1.12; }
+[data-theme='grid'] .quote { line-height: 1.26; }
+
+[data-theme='grid'] .sub { font-size: 37px; line-height: 1.36; max-width: 830px; }
+
+[data-theme='grid'] .kicker {
+  font-family: 'MHS Text', Inter, sans-serif;
+  font-variation-settings: 'wght' 700;
+  font-size: 29px;
+  letter-spacing: 0.2em;
+  color: var(--blue);
+  display: inline-block;
+  align-self: flex-start;
+}
+
+[data-theme='grid'] .bullet::before { color: var(--blue); }
+[data-theme='grid'][data-type='quote'] .body,
+[data-theme='grid'][data-type='cover'] .body { justify-content: center; }
+
+[data-theme='grid'] .stat { background: var(--blue); color: var(--white); }
+[data-theme='grid'][data-type='cta'] .action { background: var(--black); color: var(--white); }
+[data-theme='grid'][data-type='cta'] .offer-item::before { background: var(--white); }
+[data-theme='grid'] .swipe { color: var(--fg); }
+[data-theme='grid'] .brand { color: var(--dim); }
+
+/* ------------------------ Списки и цитата --------------------------- */
+
+.bullets {
+  margin-top: 44px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.bullet {
+  display: flex;
+  gap: 24px;
+  align-items: baseline;
+  font-family: 'MHS Text', Inter, sans-serif;
+  font-variation-settings: 'wght' 400;
+  font-size: var(--bullet-size);
+  line-height: 1.26;
+  color: var(--fg);
+}
+
+.bullet::before {
+  content: '→';
+  flex: 0 0 auto;
+  font-variation-settings: 'wght' 500;
+  color: var(--accent);
+}
+
+.quote {
+  font-family: 'MHS Text', Inter, sans-serif;
+  font-variation-settings: 'wght' 400;
+  font-size: var(--quote-size);
+  line-height: 1.2;
+  letter-spacing: -0.014em;
+  /* переносы расставлены в тексте — выделение не должно рваться пополам */
+  white-space: pre-line;
+}
+
+.quote-note {
+  margin-top: 48px;
+  max-width: 780px;
+  font-family: 'MHS Text', Inter, sans-serif;
+  font-variation-settings: 'wght' 400;
+  font-size: 31px;
+  line-height: 1.36;
+  color: var(--dim);
+}

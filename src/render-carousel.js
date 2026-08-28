@@ -15,7 +15,7 @@ const OUT = path.join(projectDir, 'output');
 const W = 1080;
 const H = 1350;
 
-export const THEMES = ['invert', 'flood', 'blueprint', 'marker', 'terminal'];
+export const THEMES = ['invert', 'flood', 'blueprint', 'marker', 'terminal', 'grid'];
 
 /** Моноширинный нужен только теме terminal — без него она откатится на текстовый. */
 const MONO_CANDIDATES = ['SFNSMono.ttf', 'Menlo.ttc', 'JetBrainsMono-Regular.ttf', 'Courier New.ttf'];
@@ -26,6 +26,8 @@ const FIT = {
   hookMin: 58,
   lineWidth: 888, // 1080 − 2 × 96
   titleSizes: [78, 72, 68, 64, 60, 56, 52],
+  bulletSizes: [37, 36, 35, 34, 33, 32, 31, 30],
+  quoteSizes: [84, 80, 76, 72, 68, 64, 60, 56],
   textSizes: [40, 38, 36, 34, 33, 32, 31, 30],
 };
 
@@ -71,9 +73,13 @@ window.renderSlide = (slide, deck, theme, cfg) => {
   root.style.setProperty('--hook-size', cfg.hookMax + 'px');
   root.style.setProperty('--title-size', cfg.titleSizes[0] + 'px');
   root.style.setProperty('--text-size', cfg.textSizes[0] + 'px');
+  root.style.setProperty('--bullet-size', cfg.bulletSizes[0] + 'px');
+  root.style.setProperty('--quote-size', cfg.quoteSizes[0] + 'px');
 
-  const counter = String(slide.n).padStart(2, '0') + '/' + String(deck.slideCount).padStart(2, '0');
-  const handle = deck.handle || '@the.mhs';
+  const counter = theme === 'grid'
+    ? slide.n + '/' + deck.slideCount
+    : String(slide.n).padStart(2, '0') + '/' + String(deck.slideCount).padStart(2, '0');
+  const handle = deck.handle || '@mhs.saas';
 
   let body = '';
   if (slide.type === 'cover') {
@@ -86,11 +92,19 @@ window.renderSlide = (slide, deck, theme, cfg) => {
       (slide.why ? '<div class="why">' + mark(slide.why) + '</div>' : '') +
       '<div class="action">' + mark(slide.action) + '</div>' +
       (slide.barrier ? '<div class="barrier">' + mark(slide.barrier) + '</div>' : '');
+  } else if (slide.type === 'quote') {
+    body =
+      '<div class="quote">' + mark(slide.quote) + '</div>' +
+      (slide.note ? '<div class="quote-note">' + mark(slide.note) + '</div>' : '');
   } else {
+    /* Есть список — показываем список: он читается быстрее абзаца и лучше сохраняется */
+    const meat = slide.bullets && slide.bullets.length
+      ? '<div class="bullets">' + slide.bullets.map((b) => '<div class="bullet">' + mark(b) + '</div>').join('') + '</div>'
+      : '<div class="text">' + mark(slide.body) + '</div>';
     body =
       (slide.kicker ? '<div class="kicker">' + mark(slide.kicker) + '</div>' : '') +
       '<div class="title">' + mark(slide.title) + '</div>' +
-      '<div class="text">' + mark(slide.body) + '</div>' +
+      meat +
       (slide.stat ? '<div class="stat">' + mark(slide.stat) + '</div>' : '') +
       (slide.loop ? '<div class="loop">' + mark(slide.loop) + '</div>' : '');
   }
@@ -118,6 +132,19 @@ window.renderSlide = (slide, deck, theme, cfg) => {
     while (!fits() && hookSize > cfg.hookMin) hookSize -= 2;
   }
 
+  /* Цитата набрана вручную по строкам — подгоняем кегль под полосу */
+  let quoteSize = cfg.quoteSizes[0];
+  const quoteEl = stage.querySelector('.quote');
+  if (quoteEl) {
+    for (const q of cfg.quoteSizes) {
+      root.style.setProperty('--quote-size', q + 'px');
+      quoteSize = q;
+      const r = document.createRange();
+      r.selectNodeContents(quoteEl);
+      if ([...r.getClientRects()].every((b) => b.width <= cfg.lineWidth)) break;
+    }
+  }
+
   /* Тело: ужимаем заголовок и текст, пока колонка не перестанет переполняться */
   let titleSize = cfg.titleSizes[0];
   let textSize = cfg.textSizes[0];
@@ -131,14 +158,38 @@ window.renderSlide = (slide, deck, theme, cfg) => {
     }
   }
 
+  /* Пункт списка живёт в одну строку — перенос под стрелку рвёт ритм */
+  let bulletSize = cfg.bulletSizes[0];
+  let bulletWrap = false;
+  const items = [...stage.querySelectorAll('.bullet')];
+  if (items.length) {
+    const oneLine = () => items.every((el) => {
+      const r = document.createRange();
+      r.selectNodeContents(el);
+      return [...r.getClientRects()].filter((b) => b.width > 1).length <= 1;
+    });
+    for (const b of cfg.bulletSizes) {
+      root.style.setProperty('--bullet-size', b + 'px');
+      bulletSize = b;
+      if (oneLine()) break;
+    }
+    bulletWrap = !oneLine();
+    /* Список мог подрасти — переподбираем колонку */
+    for (const t of cfg.titleSizes) {
+      root.style.setProperty('--title-size', t + 'px');
+      titleSize = t;
+      if (bodyEl.scrollHeight <= bodyEl.clientHeight + 1) break;
+    }
+  }
+
   const st = stage.getBoundingClientRect();
   return {
-    hookSize, titleSize, textSize,
+    hookSize, titleSize, textSize, bulletSize, bulletWrap, quoteSize,
     overflowY: bodyEl.scrollHeight > bodyEl.clientHeight + 1,
     outsideX: stage.scrollWidth > ${W},
     outsideY: stage.scrollHeight > ${H},
     hasBrand: stage.querySelector('.brand').textContent.trim() === 'THE MHS',
-    hasCounter: /\\d\\d\\/\\d\\d/.test(stage.querySelector('.counter').textContent),
+    hasCounter: /\\d+\\/\\d+/.test(stage.querySelector('.counter').textContent),
     textLen: bodyEl.textContent.trim().length,
     w: Math.round(st.width), h: Math.round(st.height),
   };
@@ -161,7 +212,7 @@ function auditDeck(deck) {
   const problems = [];
   const n = deck.slides.length;
   if (n !== deck.slideCount) problems.push(`колода #${deck.id}: slideCount ${deck.slideCount}, слайдов ${n}`);
-  if (n < 6 || n > 13) problems.push(`колода #${deck.id}: ${n} слайдов — вне диапазона 6…13`);
+  if (n < 3 || n > 11) problems.push(`колода #${deck.id}: ${n} слайдов — вне диапазона 3…11`);
   if (deck.slides[0]?.type !== 'cover') problems.push(`колода #${deck.id}: первый слайд не обложка`);
   const last = deck.slides[n - 1];
   if (last?.type !== 'cta') problems.push(`колода #${deck.id}: последний слайд не CTA — лид-магнит обязателен`);
@@ -203,6 +254,7 @@ export async function renderCarousels({ only = null, scale = 1, theme = null, ou
       if (m.overflowY) problems.push(`#${deck.id}/${slide.n}: текст не влез даже на минимальном кегле`);
       if (!m.hasBrand || !m.hasCounter) problems.push(`#${deck.id}/${slide.n}: нет подписи или счётчика`);
       if (m.textLen < 20) problems.push(`#${deck.id}/${slide.n}: слайд почти пустой`);
+      if (m.bulletWrap) problems.push(`#${deck.id}/${slide.n}: пункт списка не влез в строку — сократите до 46 знаков`);
 
       const file = path.join(dir, `slide-${String(slide.n).padStart(2, '0')}.png`);
       await page.screenshot({ path: file, clip: { x: 0, y: 0, width: W * scale, height: H * scale }, type: 'png' });
@@ -212,6 +264,12 @@ export async function renderCarousels({ only = null, scale = 1, theme = null, ou
     if (deck.caption) {
       fs.writeFileSync(path.join(dir, 'caption.txt'),
         deck.caption + '\n\n' + (deck.hashtags || []).join(' ') + '\n', 'utf8');
+    }
+    if (deck.topicId || deck.slideCountWhy) {
+      fs.writeFileSync(path.join(dir, 'about.txt'),
+        [`Колода #${deck.id}`, deck.rubric ? `Рубрика: ${deck.rubric}` : '',
+         `Слайдов: ${deck.slideCount}`, deck.slideCountWhy ? `Почему столько: ${deck.slideCountWhy}` : '',
+         deck.theme ? `Дизайн: ${deck.theme}` : ''].filter(Boolean).join('\n') + '\n', 'utf8');
     }
   }
 
@@ -247,7 +305,7 @@ export async function contactSheet(files, out, { cols = 6, cell = 300, label = '
 }
 
 /** Сравнение дизайнов: колонка — тема, ряд — обложка / слайд тела / CTA. */
-export async function compareSheet(deckId, out, { cell = 340, picks = [1, 3, null] } = {}) {
+export async function compareSheet(deckId, out, { cell = 300, picks = [1, 3, 6, null] } = {}) {
   const gap = 16;
   const cellH = Math.round((cell * H) / W);
   const cols = THEMES.length;
@@ -264,7 +322,7 @@ export async function compareSheet(deckId, out, { cell = 340, picks = [1, 3, nul
   const head = columns
     .map((c) => `<div class="head">${c.theme}</div>`)
     .join('');
-  const cells = [0, 1, 2]
+  const cells = picks.map((_, i) => i)
     .map((row) => columns
       .map((c) => `<img src="data:image/png;base64,${fs.readFileSync(c.files[row]).toString('base64')}">`)
       .join(''))
@@ -279,8 +337,8 @@ export async function compareSheet(deckId, out, { cell = 340, picks = [1, 3, nul
     .head{color:#1b4dff;font-size:22px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;padding-bottom:2px}
     img{width:${cell}px;height:${cellH}px;display:block;border:1px solid #25252c}
   </style>
-  <h1>Пять дизайнов · колода #${deckId}</h1>
-  <p>Ряды: обложка · слайд тела · финальный слайд с лид-магнитом</p>
+  <h1>${cols} дизайнов · колода #${deckId}</h1>
+  <p>Ряды: обложка · слайд со списком · слайд-цитата · финальный слайд с лид-магнитом</p>
   <div class="grid">${head}${cells}</div>`;
 
   const browser = await chromium.launch();
@@ -310,13 +368,15 @@ async function main() {
     const label = t ? `дизайн ${t}` : 'дизайн из колоды';
     console.log(`  ${label}: ${c.ok(String(results.length))} слайдов, колод ${decks.length}`);
 
-    if (allThemes || only) {
+    if (true) {
       for (const deck of decks) {
         const files = results.filter((r) => r.deck === deck.id).map((r) => r.file);
         const sheetName = `deck-${pad3(deck.id)}${t ? '-' + t : ''}.png`;
         const sheet = path.join(OUT, 'carousel-previews', sheetName);
         ensureDir(path.dirname(sheet));
         await contactSheet(files, sheet, { label: `${t || deck.theme} · колода #${deck.id} · ${files.length} слайдов` });
+        const inDeck = path.join(root, `deck-${pad3(deck.id)}${t ? '-' + t : ''}`, '_превью.png');
+        if (fs.existsSync(path.dirname(inDeck))) fs.copyFileSync(sheet, inDeck);
         console.log(c.dim(`    лист → ${path.relative(projectDir, sheet)}`));
       }
     }
@@ -334,7 +394,7 @@ async function main() {
     for (const id of only) {
       const out = path.join(OUT, 'carousel-previews', `compare-deck-${pad3(id)}.png`);
       await compareSheet(id, out);
-      console.log(`  Сравнение пяти дизайнов → ${path.relative(projectDir, out)}`);
+      console.log(`  Сравнение дизайнов → ${path.relative(projectDir, out)}`);
     }
   }
 

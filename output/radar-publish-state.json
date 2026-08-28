@@ -12,6 +12,12 @@
       "file": "radar-001.mp4",
       "error": "видео недоступно по ссылке: HTTP 404 на https://visionary-shortbread-915e49.netlify.app/radar-001.mp4",
       "at": "2026-08-27T22:51:36.081Z"
+    },
+    {
+      "id": 1,
+      "file": "radar-001.mp4",
+      "error": "видео недоступно по ссылке: HTTP 404 на https://visionary-shortbread-915e49.netlify.app/radar-001.mp4",
+      "at": "2026-08-28T00:42:18.762Z"
     }
   ]
 }

@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { findPromptsJson, validateAndFix, pad3 } from './utils.js';
+import { findPromptsJson, validateAndFix, pad3, findDueSlot } from './utils.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const projectDir = path.resolve(here, '..');
@@ -29,6 +29,8 @@ const SERIES = {
     load: null,
     title: (item) => cut(`${item.title} — ${firstSentence(item.prompt)}`, 100),
     tags: ['промпты', 'chatgpt', 'нейросети', 'ai', 'бизнес'],
+    times: '12:00,15:00,18:00',
+    timesEnv: 'YT_POST_TIMES',
   },
   radar: {
     reels: path.join(projectDir, 'output', 'radar-reels', 'r-git'),
@@ -41,6 +43,8 @@ const SERIES = {
       }),
     title: (item) => cut(`${item.headline.replace(/\n/g, ' ')} — ${item.repo}`, 100),
     tags: ['github', 'opensource', 'нейросети', 'инструменты', 'бесплатно'],
+    times: '13:00,16:00,19:00',
+    timesEnv: 'YT_RADAR_POST_TIMES',
   },
 };
 
@@ -59,6 +63,9 @@ const CFG = {
   // что ни поставь. После аудита сюда ставится public.
   privacy: process.env.YOUTUBE_PRIVACY || 'private',
   categoryId: process.env.YOUTUBE_CATEGORY || '28', // наука и техника
+  times: (process.env[S.timesEnv] || S.times).split(',').map((x) => x.trim()),
+  grace: Number(process.env.SLOT_GRACE ?? 90),
+  timezone: process.env.SCHEDULE_TZ || 'Europe/Moscow',
 };
 
 const c = {
@@ -211,12 +218,27 @@ async function cmdCheck() {
     console.log(`  Подписчиков: ${ch.statistics.subscriberCount}  ·  видео: ${ch.statistics.videoCount}`);
   }
   console.log(`  Приватность: ${CFG.privacy}`);
+  console.log(`  Расписание:  ${CFG.times.join(', ')} ${CFG.timezone}`);
   const q = buildQueue();
   console.log(`  В очереди:   ${q.length} (${q.filter((x) => x.exists).length} файлов на месте)`);
   line();
 }
 
-async function cmdNext({ confirm, count }) {
+async function cmdNext({ confirm, count, ifDue }) {
+  let slotKey = null;
+  if (ifDue) {
+    const done = new Set(loadState().uploaded.map((u) => u.slot).filter(Boolean));
+    const { slot, now } = findDueSlot({
+      times: CFG.times, grace: CFG.grace, timezone: CFG.timezone, done,
+    });
+    if (!slot) {
+      console.log(c.dim(`${now.clock} ${CFG.timezone} — не время. Слоты: ${CFG.times.join(', ')}`));
+      return;
+    }
+    slotKey = slot.key;
+    console.log(c.dim(`слот ${slot.time}, опоздание ${slot.late} мин`));
+  }
+
   const missing = checkConfig();
   if (missing.length) {
     console.error(c.err(`Не настроено: ${missing.join(', ')}`));
@@ -256,7 +278,7 @@ async function cmdNext({ confirm, count }) {
           selfDeclaredMadeForKids: false,
         },
       });
-      state.uploaded.push({ id: v.id, videoId: id, at: new Date().toISOString() });
+      state.uploaded.push({ id: v.id, videoId: id, at: new Date().toISOString(), slot: slotKey });
       saveState(state);
       console.log(c.ok(`готово → youtu.be/${id}`));
     } catch (e) {
@@ -272,5 +294,10 @@ async function cmdNext({ confirm, count }) {
 const argv = process.argv.slice(2);
 const countArg = (argv.find((a) => a.startsWith('--count=')) || '').split('=')[1];
 
-if (argv.includes('--next')) await cmdNext({ confirm: argv.includes('--confirm'), count: Number(countArg) || 1 });
+if (argv.includes('--next'))
+  await cmdNext({
+    confirm: argv.includes('--confirm'),
+    count: Number(countArg) || 1,
+    ifDue: argv.includes('--if-due'),
+  });
 else await cmdCheck();

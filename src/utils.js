@@ -200,3 +200,43 @@ export function rmrf(dir) {
 export function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
 }
+
+/* ------------------------------------------------------------------ *
+ *  Расписание по слотам
+ *
+ *  GitHub запускает workflow «когда сможет», поэтому решение публиковать
+ *  принимает код: слот наступил, опоздание в пределах окна, и сегодня
+ *  этот слот ещё не отрабатывал.
+ * ------------------------------------------------------------------ */
+
+export function localNow(timezone = 'Europe/Moscow') {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-CA', {
+      timeZone: timezone,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', hour12: false,
+    })
+      .formatToParts(new Date())
+      .map((x) => [x.type, x.value])
+  );
+  return {
+    date: `${parts.year}-${parts.month}-${parts.day}`,
+    minutes: Number(parts.hour) * 60 + Number(parts.minute),
+    clock: `${parts.hour}:${parts.minute}`,
+  };
+}
+
+/** Ближайший наступивший слот, ещё не отработанный сегодня. */
+export function findDueSlot({ times, grace = 90, timezone = 'Europe/Moscow', done = new Set() }) {
+  const now = localNow(timezone);
+  let best = null;
+  for (const t of times) {
+    const [h, m] = t.split(':').map(Number);
+    const at = h * 60 + m;
+    const key = `${now.date} ${t}`;
+    if (done.has(key)) continue;
+    const late = now.minutes - at;
+    if (late >= 0 && late <= grace && (!best || at > best.at)) best = { key, time: t, at, late };
+  }
+  return { slot: best, now };
+}

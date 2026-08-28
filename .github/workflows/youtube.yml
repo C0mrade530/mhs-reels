@@ -1,8 +1,12 @@
 name: Выгрузка на YouTube
 
 # Те же ролики, что уходят в Instagram. Очередь своя, поэтому площадки
-# не мешают друг другу. Квота YouTube — 10 000 единиц в сутки, одна
-# загрузка стоит 1600, то есть больше шести роликов в день не выйдет.
+# не мешают друг другу.
+#
+# Квота YouTube — 10 000 единиц в сутки, одна загрузка стоит 1600, то есть
+# ровно шесть роликов в день и ни одним больше. Поэтому здесь то же
+# слотовое расписание, что и в Instagram: workflow будит крон, а решение
+# принимает --if-due по московскому времени.
 on:
   schedule:
     - cron: '11,26,41,56 * * * *'
@@ -54,7 +58,9 @@ jobs:
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
           YOUTUBE_PRIVACY: ${{ vars.YOUTUBE_PRIVACY || 'private' }}
-        run: node src/youtube.js --series=${{ matrix.series }} --next --confirm
+          YT_POST_TIMES: 12:00,15:00,18:00
+          YT_RADAR_POST_TIMES: 13:00,16:00,19:00
+        run: node src/youtube.js --series=${{ matrix.series }} --next --confirm --if-due
 
       - name: Запомнить загруженное
         if: always()

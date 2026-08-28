@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { findPromptsJson, validateAndFix, pad3 } from './utils.js';
+import { findPromptsJson, validateAndFix, pad3, findDueSlot } from './utils.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const projectDir = path.resolve(here, '..');
@@ -89,45 +89,6 @@ const CFG = {
   grace: Number(process.env.SLOT_GRACE ?? 90),
   timezone: process.env.SCHEDULE_TZ || 'Europe/Moscow',
 };
-
-/** Текущие дата и минуты суток в часовом поясе расписания. */
-function localNow() {
-  const parts = Object.fromEntries(
-    new Intl.DateTimeFormat('en-CA', {
-      timeZone: CFG.timezone,
-      year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', minute: '2-digit', hour12: false,
-    })
-      .formatToParts(new Date())
-      .map((p) => [p.type, p.value])
-  );
-  return {
-    date: `${parts.year}-${parts.month}-${parts.day}`,
-    minutes: Number(parts.hour) * 60 + Number(parts.minute),
-    clock: `${parts.hour}:${parts.minute}`,
-  };
-}
-
-/**
- * Ближайший наступивший слот, который сегодня ещё не отработан.
- * null — значит публиковать сейчас не нужно.
- */
-function dueSlot(state) {
-  const now = localNow();
-  const done = new Set(state.published.map((p) => p.slot).filter(Boolean));
-  let best = null;
-  for (const t of CFG.times) {
-    const [h, m] = t.split(':').map(Number);
-    const at = h * 60 + m;
-    const key = `${now.date} ${t}`;
-    if (done.has(key)) continue;
-    const late = now.minutes - at;
-    if (late >= 0 && late <= CFG.grace && (!best || at > best.at)) {
-      best = { key, time: t, at, late };
-    }
-  }
-  return { slot: best, now };
-}
 
 const API = (p) => `https://${CFG.host}/${CFG.version}/${p}`;
 

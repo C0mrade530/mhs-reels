@@ -1,11 +1,14 @@
 name: Публикация находки
 
-# Вторая рубрика, независимая очередь. Время в cron — UTC, Москва = UTC+3.
+# Вторая рубрика, независимая очередь.
+# GitHub запускает расписание с задержкой — иногда на часы, и сильнее всего
+# ровно в начале часа. Поэтому просыпаемся часто и в смещённые минуты, а
+# решение «пора или нет» принимает сам скрипт по московскому времени.
+# Слот, опоздавший больше чем на SLOT_GRACE минут, пропускается —
+# лучше не выложить, чем выложить в три ночи.
 on:
   schedule:
-    - cron: '0 10 * * *'  # 13:00 МСК
-    - cron: '0 13 * * *'  # 16:00 МСК
-    - cron: '0 16 * * *'  # 19:00 МСК
+    - cron: '7,22,37,52 * * * *'
   workflow_dispatch:
 
 concurrency:
@@ -31,9 +34,9 @@ jobs:
       - name: Опубликовать следующую находку
         env:
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
-          MEDIA_BASE_URL: https://visionary-shortbread-915e49.netlify.app
+          RADAR_MEDIA_BASE_URL: https://visionary-shortbread-915e49.netlify.app
           RADAR_POST_TIMES: 13:00,16:00,19:00
-        run: node src/publish.js --series=radar --next --confirm
+        run: node src/publish.js --series=radar --next --confirm --if-due
 
       - name: Запомнить, что опубликовано
         if: always()

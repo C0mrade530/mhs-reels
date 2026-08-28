@@ -15,6 +15,7 @@ const SERIES = {
     prefix: 'reel',
     times: '12:00,15:00,18:00',
     timesEnv: 'POST_TIMES',
+    urlEnv: 'MEDIA_BASE_URL',
     title: 'Секретный промпт',
     load: null,
   },
@@ -24,6 +25,7 @@ const SERIES = {
     prefix: 'radar',
     times: '13:00,16:00,19:00',
     timesEnv: 'RADAR_POST_TIMES',
+    urlEnv: 'RADAR_MEDIA_BASE_URL',
     title: 'GitHub-находка',
     load: () => {
       const items = JSON.parse(
@@ -72,7 +74,7 @@ function detectHost(token) {
 const CFG = {
   userId: process.env.IG_USER_ID,
   token: process.env.IG_ACCESS_TOKEN,
-  baseUrl: (process.env.MEDIA_BASE_URL || '').replace(/\/+$/, ''),
+  baseUrl: (process.env[S.urlEnv] || process.env.MEDIA_BASE_URL || '').replace(/\/+$/, ''),
   version: process.env.GRAPH_VERSION || 'v23.0',
   times: (process.env[S.timesEnv] || S.times).split(',').map((s) => s.trim()),
   shareToFeed: process.env.SHARE_TO_FEED !== 'false',
@@ -81,7 +83,51 @@ const CFG = {
   // кадр — а он у нас чёрный из-за фейда на старте, и в сетке профиля
   // обложка выглядит пустой. Секунда — уже полностью проявившаяся карточка.
   thumbOffset: Number(process.env.THUMB_OFFSET ?? 1000),
+  // Сколько минут после слота ещё допустимо публиковать. GitHub запускает
+  // расписание с задержкой, и без этого окна пропущенный полдень уехал бы
+  // в ночь. Опоздали сильнее — слот пропускаем, а не постим не вовремя.
+  grace: Number(process.env.SLOT_GRACE ?? 100),
+  timezone: process.env.SCHEDULE_TZ || 'Europe/Moscow',
 };
+
+/** Текущие дата и минуты суток в часовом поясе расписания. */
+function localNow() {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-CA', {
+      timeZone: CFG.timezone,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', hour12: false,
+    })
+      .formatToParts(new Date())
+      .map((p) => [p.type, p.value])
+  );
+  return {
+    date: `${parts.year}-${parts.month}-${parts.day}`,
+    minutes: Number(parts.hour) * 60 + Number(parts.minute),
+    clock: `${parts.hour}:${parts.minute}`,
+  };
+}
+
+/**
+ * Ближайший наступивший слот, который сегодня ещё не отработан.
+ * null — значит публиковать сейчас не нужно.
+ */
+function dueSlot(state) {
+  const now = localNow();
+  const done = new Set(state.published.map((p) => p.slot).filter(Boolean));
+  let best = null;
+  for (const t of CFG.times) {
+    const [h, m] = t.split(':').map(Number);
+    const at = h * 60 + m;
+    const key = `${now.date} ${t}`;
+    if (done.has(key)) continue;
+    const late = now.minutes - at;
+    if (late >= 0 && late <= CFG.grace && (!best || at > best.at)) {
+      best = { key, time: t, at, late };
+    }
+  }
+  return { slot: best, now };
+}
 
 const API = (p) => `https://${CFG.host}/${CFG.version}/${p}`;
 
@@ -255,6 +301,12 @@ function cmdStatus() {
   console.log(`  Расписание:    ${CFG.times.join(', ')} ${c.dim(`(${perDay} раза в день, ${Intl.DateTimeFormat().resolvedOptions().timeZone})`)}`);
   console.log(`  Хост API:      ${CFG.host} ${c.dim(CFG.token ? '(по типу токена)' : '')}`);
   console.log(`  Обложка:       кадр на ${(CFG.thumbOffset / 1000).toFixed(1)} с`);
+  const { slot, now } = dueSlot(state);
+  console.log(
+    `  Сейчас:        ${now.clock} ${CFG.timezone} — ${
+      slot ? c.ok(`слот ${slot.time} ждёт публикации`) : c.dim('вне слота')
+    }`
+  );
   if (queue.length) {
     console.log(`  Хватит на:     ${Math.ceil(queue.length / perDay)} дн.`);
     console.log(`  Следующий:     ${queue[0].title} ${c.dim(`→ ${queue[0].file}`)}`);
@@ -270,7 +322,20 @@ function cmdStatus() {
   line();
 }
 
-async function cmdNext({ confirm, count }) {
+async function cmdNext({ confirm, count, ifDue }) {
+  let slotKey = null;
+  if (ifDue) {
+    const { slot, now } = dueSlot(loadState());
+    if (!slot) {
+      console.log(
+        c.dim(`${now.clock} ${CFG.timezone} — не время. Слоты: ${CFG.times.join(', ')}`)
+      );
+      return;
+    }
+    slotKey = slot.key;
+    console.log(c.dim(`слот ${slot.time}, опоздание ${slot.late} мин`));
+  }
+
   const problems = checkConfig({ requireCreds: confirm });
   if (problems.length) {
     console.error(c.err(`Не готово: ${problems.join(', ')}`));
@@ -312,7 +377,7 @@ async function cmdNext({ confirm, count }) {
       process.stdout.write(' публикация…');
       const mediaId = await publishContainer(containerId);
 
-      state.published.push({ id: reel.id, mediaId, file: reel.file, at: new Date().toISOString() });
+      state.published.push({ id: reel.id, mediaId, file: reel.file, at: new Date().toISOString(), slot: slotKey });
       saveState(state);
       console.log(c.ok(` готово (${mediaId})`));
     } catch (e) {
@@ -381,5 +446,6 @@ const confirm = argv.includes('--confirm');
 const countArg = (argv.find((a) => a.startsWith('--count=')) || '').split('=')[1];
 
 if (argv.includes('--schedule')) cmdSchedule();
-else if (argv.includes('--next')) await cmdNext({ confirm, count: Number(countArg) || 1 });
+else if (argv.includes('--next'))
+  await cmdNext({ confirm, count: Number(countArg) || 1, ifDue: argv.includes('--if-due') });
 else cmdStatus();

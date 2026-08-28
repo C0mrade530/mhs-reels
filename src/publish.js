@@ -86,7 +86,7 @@ const CFG = {
   // Сколько минут после слота ещё допустимо публиковать. GitHub запускает
   // расписание с задержкой, и без этого окна пропущенный полдень уехал бы
   // в ночь. Опоздали сильнее — слот пропускаем, а не постим не вовремя.
-  grace: Number(process.env.SLOT_GRACE ?? 100),
+  grace: Number(process.env.SLOT_GRACE ?? 90),
   timezone: process.env.SCHEDULE_TZ || 'Europe/Moscow',
 };
 

@@ -22,3 +22,5 @@ audio/*.flac
 audio/*.ogg
 audio/*.aac
 .DS_Store
+output/carousel-cards/
+output/carousel-cards@2x/

@@ -14,7 +14,9 @@
     "radar:images": "node src/radar-images.js",
     "radar:cards": "node src/render-radar.js",
     "radar:reels": "node src/reels.js --series=radar",
-    "radar:publish": "node src/publish.js --series=radar"
+    "radar:publish": "node src/publish.js --series=radar",
+    "carousel": "node src/render-carousel.js",
+    "carousel:themes": "node src/render-carousel.js --themes"
   },
   "dependencies": {
     "playwright": "^1.56.0"

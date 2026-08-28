@@ -147,9 +147,22 @@ function buildQueue() {
     .map((item) => {
       const file = path.join(S.reels, `${S.prefix}-${pad3(item.id)}.mp4`);
       const captionFile = path.join(S.reels, `${S.prefix}-${pad3(item.id)}.txt`);
+      // В облаке рядом с mp4 подписи нет — собираем её из данных так же,
+      // как это делает сборщик роликов, вместе со ссылкой на репозиторий.
       const description = fs.existsSync(captionFile)
         ? fs.readFileSync(captionFile, 'utf8').trim()
-        : [item.title, '', item.prompt || item.description].join('\n').trim();
+        : [
+            item.title,
+            '',
+            item.headline ? item.headline.replace(/\n/g, ' ') : '',
+            item.headline ? '' : null,
+            item.prompt || item.description,
+            item.repo ? '' : null,
+            item.repo ? `github.com/${item.repo}` : null,
+          ]
+            .filter((x) => x !== null)
+            .join('\n')
+            .trim();
       return { id: item.id, file, exists: fs.existsSync(file), title: S.title(item), description };
     });
 }

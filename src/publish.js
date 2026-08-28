@@ -186,9 +186,16 @@ async function resolveUserId() {
 async function ensureReachable(url) {
   const res = await fetch(url, { method: 'HEAD', redirect: 'follow' });
   if (!res.ok) throw new Error(`видео недоступно по ссылке: HTTP ${res.status} на ${url}`);
-  const type = res.headers.get('content-type') || '';
-  if (!type.startsWith('video/')) {
-    throw new Error(`по ссылке отдаётся не видео, а ${type || 'неизвестный тип'}: ${url}`);
+  const type = (res.headers.get('content-type') || '').toLowerCase();
+  // Разные хостинги отдают mp4 по-разному: Netlify — video/mp4,
+  // GitHub Releases — application/octet-stream. Отсекаем явную подмену
+  // (HTML-заглушка вместо файла), остальное отдаём на суд Instagram.
+  if (type.startsWith('text/') || type.includes('html') || type.includes('json')) {
+    throw new Error(`по ссылке отдаётся не видео, а ${type}: ${url}`);
+  }
+  const len = Number(res.headers.get('content-length') || 0);
+  if (len > 0 && len < 100000) {
+    throw new Error(`файл подозрительно мал (${len} байт): ${url}`);
   }
 }
 
@@ -390,6 +397,39 @@ async function cmdNext({ confirm, count, ifDue }) {
   }
 }
 
+/**
+ * Проверка хостинга без публикации: создаём контейнер и смотрим, смог ли
+ * Instagram скачать и обработать видео. media_publish не вызываем —
+ * в профиле ничего не появляется.
+ */
+async function cmdCheckMedia() {
+  const problems = checkConfig({ requireCreds: true });
+  if (problems.length) {
+    console.error(c.err(`Не готово: ${problems.join(', ')}`));
+    process.exit(1);
+  }
+  const reel = buildQueue()[0];
+  if (!reel) {
+    console.log(c.warn('Очередь пуста — нечего проверять.'));
+    return;
+  }
+  await resolveUserId();
+  console.log(`  ссылка: ${reel.url}`);
+  try {
+    await ensureReachable(reel.url);
+    console.log(c.ok('  ссылка отдаёт файл'));
+    process.stdout.write('  контейнер…');
+    const id = await createContainer(reel.url, reel.caption);
+    process.stdout.write(' обработка…');
+    await waitReady(id);
+    console.log(c.ok(' Instagram принял видео'));
+    console.log(c.dim('  контейнер не публикуется, в профиле ничего не появится'));
+  } catch (e) {
+    console.log(c.err(`\n  не прошло: ${e.message}`));
+    process.exitCode = 1;
+  }
+}
+
 function cmdSchedule() {
   const node = process.execPath;
   const script = path.join(projectDir, 'src', 'publish.js');
@@ -445,7 +485,8 @@ const argv = process.argv.slice(2);
 const confirm = argv.includes('--confirm');
 const countArg = (argv.find((a) => a.startsWith('--count=')) || '').split('=')[1];
 
-if (argv.includes('--schedule')) cmdSchedule();
+if (argv.includes('--check-media')) await cmdCheckMedia();
+else if (argv.includes('--schedule')) cmdSchedule();
 else if (argv.includes('--next'))
   await cmdNext({ confirm, count: Number(countArg) || 1, ifDue: argv.includes('--if-due') });
 else cmdStatus();

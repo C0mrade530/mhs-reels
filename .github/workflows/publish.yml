@@ -37,7 +37,8 @@ jobs:
           # Адрес хостинга секретом не является — держим его на виду.
           MEDIA_BASE_URL: https://visionary-shortbread-915e49.netlify.app
           # IG_USER_ID не нужен: скрипт спросит его у API по токену.
-        run: node src/publish.js --next --confirm
+          POST_TIMES: 12:00,15:00,18:00
+        run: node src/publish.js --next --confirm --if-due
 
       - name: Запомнить, что опубликовано
         if: always()

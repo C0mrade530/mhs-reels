@@ -1,0 +1,31 @@
+name: Проверка хостинга
+
+# Создаёт контейнер в Instagram и смотрит, скачалось ли видео по ссылке.
+# Ничего не публикует — нужен, чтобы проверить хостинг до выхода в ленту.
+on:
+  workflow_dispatch:
+    inputs:
+      series:
+        description: Рубрика
+        type: choice
+        options: [prompts, radar]
+        default: prompts
+      base_url:
+        description: Адрес хостинга для проверки
+        required: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm ci --omit=dev --ignore-scripts
+      - name: Проверить, принимает ли Instagram видео
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          MEDIA_BASE_URL: ${{ inputs.base_url }}
+          RADAR_MEDIA_BASE_URL: ${{ inputs.base_url }}
+        run: node src/publish.js --series=${{ inputs.series }} --check-media

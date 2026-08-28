@@ -1,0 +1,83 @@
+name: Сторож расписания
+
+# GitHub не выполняет расписание вовремя: крон уходил в простой на часы,
+# а то и не срабатывал вовсе. Поэтому время сторожим сами.
+#
+# Задание живёт почти шесть часов (это потолок для одного job), каждые пять
+# минут спрашивает у скрипта, не наступил ли слот, и в конце смены запускает
+# себе замену. Расписание ниже — только аварийный подъём, если цепочка
+# оборвалась: повторный запуск сам увидит, что смена уже идёт, и выйдет.
+#
+# Репозиторий публичный, минуты Actions для таких бесплатны и не ограничены,
+# так что непрерывное дежурство ничего не стоит.
+on:
+  schedule:
+    - cron: '3,33 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Не заступать, если смена уже идёт
+        id: guard
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          running=$(gh run list --repo "$GITHUB_REPOSITORY" \
+            --workflow "Сторож расписания" --status in_progress \
+            --json databaseId --jq 'length')
+          if [ "$running" -gt 1 ]; then
+            echo "Смена уже идёт ($running запусков) — выхожу."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v5
+        if: steps.guard.outputs.skip != 'true'
+        with:
+          node-version: 22
+
+      - name: Установить зависимости
+        if: steps.guard.outputs.skip != 'true'
+        run: npm ci --omit=dev --ignore-scripts
+
+      - name: Дежурить и публиковать по слотам
+        if: steps.guard.outputs.skip != 'true'
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          MEDIA_BASE_URL: https://github.com/C0mrade530/mhs-reels/releases/download/media-v1
+          RADAR_MEDIA_BASE_URL: https://github.com/C0mrade530/mhs-reels/releases/download/media-v1
+          POST_TIMES: 12:00,15:00,18:00
+          RADAR_POST_TIMES: 13:00,16:00,19:00
+        run: |
+          git config user.name  "mhs-publisher"
+          git config user.email "actions@github.com"
+          END=$(( $(date +%s) + 330 * 60 ))
+          while [ "$(date +%s)" -lt "$END" ]; do
+            for series in prompts radar; do
+              node src/publish.js --series="$series" --next --confirm --if-due || true
+            done
+            if [ -n "$(git status --porcelain output/)" ]; then
+              git pull --rebase --autostash origin main
+              git add output/publish-state.json output/radar-publish-state.json
+              git commit -m "очередь: опубликован очередной ролик"
+              git push
+            fi
+            sleep 300
+          done
+
+      - name: Передать смену
+        if: always() && steps.guard.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run "Сторож расписания" --repo "$GITHUB_REPOSITORY"

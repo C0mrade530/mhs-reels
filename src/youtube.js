@@ -196,13 +196,20 @@ async function cmdCheck() {
   );
   const body = await res.json();
   const ch = body.items?.[0];
-  if (!ch) {
-    console.log(c.err('  Доступ есть, но канал не найден. Аккаунт точно с YouTube-каналом?'));
+
+  if (res.status === 403 && /scope/i.test(body.error?.message || '')) {
+    // Токен выдан только на загрузку — читать канал нечем, но выгружать можно
+    console.log(c.warn('  Канал показать не могу: токен выдан без права на чтение.'));
+    console.log(c.dim('  Загрузка при этом работает. Чтобы видеть канал:  npm run youtube:auth'));
+  } else if (!ch) {
+    console.log(c.err('  Канал не найден. Возможно, у аккаунта его ещё нет,'));
+    console.log(c.err('  либо канал в бренд-аккаунте — тогда выбирайте его при выдаче доступа.'));
     process.exitCode = 1;
     return;
+  } else {
+    console.log(`  Канал:       ${c.ok(ch.snippet.title)}`);
+    console.log(`  Подписчиков: ${ch.statistics.subscriberCount}  ·  видео: ${ch.statistics.videoCount}`);
   }
-  console.log(`  Канал:      ${c.ok(ch.snippet.title)}`);
-  console.log(`  Подписчиков: ${ch.statistics.subscriberCount}  ·  видео: ${ch.statistics.videoCount}`);
   console.log(`  Приватность: ${CFG.privacy}`);
   const q = buildQueue();
   console.log(`  В очереди:   ${q.length} (${q.filter((x) => x.exists).length} файлов на месте)`);

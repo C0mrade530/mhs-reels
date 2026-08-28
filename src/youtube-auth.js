@@ -19,7 +19,12 @@ const ENV = path.join(projectDir, '.env');
 // Порт можно сменить, если 8788 занят: OAUTH_PORT=8899 npm run youtube:auth
 const PORT = Number(process.env.OAUTH_PORT) || 8788;
 const REDIRECT = `http://localhost:${PORT}`;
-const SCOPE = 'https://www.googleapis.com/auth/youtube.upload';
+// upload — то, ради чего всё затевалось; readonly нужен только чтобы
+// перед выгрузкой показать, на какой канал она пойдёт.
+const SCOPE = [
+  'https://www.googleapis.com/auth/youtube.upload',
+  'https://www.googleapis.com/auth/youtube.readonly',
+].join(' ');
 
 const c = {
   dim: (s) => `\x1b[2m${s}\x1b[0m`,

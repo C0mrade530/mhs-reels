@@ -35,7 +35,9 @@ jobs:
           # Единственный секрет, который нужно завести руками.
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
           # Адрес хостинга секретом не является — держим его на виду.
-          MEDIA_BASE_URL: https://visionary-shortbread-915e49.netlify.app
+          # Ролики раздаёт релиз этого же репозитория: не зависит от
+          # стороннего аккаунта и не затирается чужим деплоем.
+          MEDIA_BASE_URL: https://github.com/C0mrade530/mhs-reels/releases/download/media-v1
           # IG_USER_ID не нужен: скрипт спросит его у API по токену.
           POST_TIMES: 12:00,15:00,18:00
         run: node src/publish.js --next --confirm --if-due

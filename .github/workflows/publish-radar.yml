@@ -34,7 +34,9 @@ jobs:
       - name: Опубликовать следующую находку
         env:
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
-          RADAR_MEDIA_BASE_URL: https://visionary-shortbread-915e49.netlify.app
+          # Ролики раздаёт релиз этого же репозитория: не зависит от
+          # стороннего аккаунта и не затирается чужим деплоем.
+          RADAR_MEDIA_BASE_URL: https://github.com/C0mrade530/mhs-reels/releases/download/media-v1
           RADAR_POST_TIMES: 13:00,16:00,19:00
         run: node src/publish.js --series=radar --next --confirm --if-due
 

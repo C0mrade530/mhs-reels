@@ -17,6 +17,10 @@ on:
         type: choice
         options: [prompts, radar]
         default: prompts
+      force:
+        description: Загрузить сейчас, не дожидаясь слота
+        type: boolean
+        default: false
 
 concurrency:
   group: youtube
@@ -30,27 +34,13 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        series: [prompts, radar]
+        series: ${{ inputs.series && fromJSON(format('["{0}"]', inputs.series)) || fromJSON('["prompts","radar"]') }}
 
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with: { node-version: 22 }
       - run: npm ci --omit=dev --ignore-scripts
-
-      - name: Скачать ролики этой рубрики
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          if [[ "${{ matrix.series }}" == "radar" ]]; then
-            mkdir -p output/radar-reels/r-git && cd output/radar-reels/r-git
-            PREFIX=radar
-          else
-            mkdir -p output/reels && cd output/reels
-            PREFIX=reel
-          fi
-          # тянем только то, что реально пойдёт в загрузку
-          gh release download media-v1 --repo "$GITHUB_REPOSITORY" --pattern "$PREFIX-*.mp4" --clobber --skip-existing || true
 
       - name: Загрузить следующий ролик
         env:
@@ -60,7 +50,11 @@ jobs:
           YOUTUBE_PRIVACY: ${{ vars.YOUTUBE_PRIVACY || 'private' }}
           YT_POST_TIMES: 12:00,15:00,18:00
           YT_RADAR_POST_TIMES: 13:00,16:00,19:00
-        run: node src/youtube.js --series=${{ matrix.series }} --next --confirm --if-due
+          YT_MEDIA_BASE_URL: https://github.com/C0mrade530/mhs-reels/releases/download/media-v1
+        run: |
+          FLAGS="--next --confirm"
+          [[ "${{ inputs.force }}" == "true" ]] || FLAGS="$FLAGS --if-due"
+          node src/youtube.js --series=${{ matrix.series }} $FLAGS
 
       - name: Запомнить загруженное
         if: always()

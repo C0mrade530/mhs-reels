@@ -63,6 +63,8 @@ const CFG = {
   // что ни поставь. После аудита сюда ставится public.
   privacy: process.env.YOUTUBE_PRIVACY || 'private',
   categoryId: process.env.YOUTUBE_CATEGORY || '28', // наука и техника
+  // Откуда брать ролик, если рядом его нет: тот же релиз, что кормит Instagram
+  mediaBase: (process.env.YT_MEDIA_BASE_URL || process.env.MEDIA_BASE_URL || '').replace(/\/+$/, ''),
   times: (process.env[S.timesEnv] || S.times).split(',').map((x) => x.trim()),
   grace: Number(process.env.SLOT_GRACE ?? 90),
   timezone: process.env.SCHEDULE_TZ || 'Europe/Moscow',
@@ -103,6 +105,21 @@ async function accessToken() {
     throw new Error(`не удалось обновить доступ: ${body.error_description || body.error || 'неизвестно'}`);
   }
   return body.access_token;
+}
+
+/**
+ * Качает ролик из релиза, если локальной копии нет. В облаке это дешевле,
+ * чем тянуть всю сотню: нужен ровно один файл на запуск.
+ */
+async function ensureLocal(file) {
+  if (fs.existsSync(file)) return file;
+  if (!CFG.mediaBase) throw new Error(`нет файла ${path.basename(file)} и не задан адрес хостинга`);
+  const url = `${CFG.mediaBase}/${path.basename(file)}`;
+  const res = await fetch(url, { redirect: 'follow' });
+  if (!res.ok) throw new Error(`не скачать ${path.basename(file)}: HTTP ${res.status}`);
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, Buffer.from(await res.arrayBuffer()));
+  return file;
 }
 
 /* --------------------------- Загрузка ------------------------------ */
@@ -244,7 +261,7 @@ async function cmdNext({ confirm, count, ifDue }) {
     console.error(c.err(`Не настроено: ${missing.join(', ')}`));
     process.exit(1);
   }
-  const queue = buildQueue().filter((x) => x.exists).slice(0, count);
+  const queue = buildQueue().slice(0, count);
   if (!queue.length) {
     console.log(c.warn('Очередь пуста.'));
     return;
@@ -254,7 +271,9 @@ async function cmdNext({ confirm, count, ifDue }) {
     console.log(c.warn('ПРОБНЫЙ ПРОГОН — ничего не загружается'));
     for (const v of queue) {
       console.log(`  ${c.b(v.title)}`);
-      console.log(c.dim(`    ${path.basename(v.file)} · приватность ${CFG.privacy}`));
+      console.log(
+        c.dim(`    ${path.basename(v.file)} · ${v.exists ? 'локально' : 'скачается из релиза'} · приватность ${CFG.privacy}`)
+      );
     }
     line();
     return;
@@ -265,6 +284,7 @@ async function cmdNext({ confirm, count, ifDue }) {
     const state = loadState();
     process.stdout.write(`${v.title.slice(0, 50)}… `);
     try {
+      await ensureLocal(v.file);
       const id = await upload(token, v.file, {
         snippet: {
           title: v.title,

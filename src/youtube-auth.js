@@ -16,7 +16,8 @@ const ENV = path.join(projectDir, '.env');
  *  на этой машине. Ни секрет, ни токен нигде больше не появляются.
  * ------------------------------------------------------------------ */
 
-const PORT = 8788;
+// Порт можно сменить, если 8788 занят: OAUTH_PORT=8899 npm run youtube:auth
+const PORT = Number(process.env.OAUTH_PORT) || 8788;
 const REDIRECT = `http://localhost:${PORT}`;
 const SCOPE = 'https://www.googleapis.com/auth/youtube.upload';
 
@@ -70,6 +71,16 @@ async function main() {
       prompt: 'consent',
     });
 
+  console.log(c.b('Адрес возврата, который должен быть разрешён в Google:'));
+  console.log('  ' + c.ok(REDIRECT));
+  console.log(
+    c.dim(
+      '  Клиент типа Web application: Cloud Console → Credentials → ваш OAuth client\n' +
+        '  → Authorized redirect URIs → Add URI → вставить строку выше → Save.\n' +
+        '  Клиент типа Desktop app: ничего прописывать не нужно.\n'
+    )
+  );
+
   console.log(c.b('Открываю страницу согласия Google…'));
   console.log(c.dim('Если не открылась, перейдите вручную:\n' + url + '\n'));
   execFile('open', [url], () => {});
@@ -86,6 +97,15 @@ async function main() {
       q.get('code') ? resolve(q.get('code')) : reject(new Error(q.get('error') || 'нет кода'));
     });
     server.listen(PORT);
+    server.on('error', (e) =>
+      reject(
+        new Error(
+          e.code === 'EADDRINUSE'
+            ? `порт ${PORT} занят — запустите с другим: OAUTH_PORT=8899 npm run youtube:auth`
+            : e.message
+        )
+      )
+    );
     setTimeout(() => {
       server.close();
       reject(new Error('за 5 минут доступ не выдали'));

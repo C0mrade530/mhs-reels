@@ -92,6 +92,18 @@ const CFG = {
 
 const API = (p) => `https://${CFG.host}/${CFG.version}/${p}`;
 
+/** Ближайший наступивший слот с учётом уже отработанных сегодня. */
+function dueSlot(state) {
+  return findDueSlot({
+    times: CFG.times,
+    grace: CFG.grace,
+    timezone: CFG.timezone,
+    done: new Set(state.published.map((p) => p.slot).filter(Boolean)),
+  });
+}
+
+
+
 const c = {
   dim: (s) => `\x1b[2m${s}\x1b[0m`,
   ok: (s) => `\x1b[32m${s}\x1b[0m`,

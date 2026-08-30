@@ -1,0 +1,691 @@
+<title>Настройка ChatGPT · Эпизод 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Unbounded:wght@600;800&display=swap">
+
+<style>
+:root{
+  --ground:#07080A;
+  --panel:#0F1116;
+  --panel-2:#151820;
+  --line:#242832;
+  --line-soft:#15181E;
+  --ink:#EFF1F4;
+  --muted:#828892;
+  --dim:#575D67;
+  --brand:#3B74FF;
+  --brand-lite:#9DB9FF;
+  --brand-soft:rgba(59,116,255,.12);
+  --warn:#E5484D;
+  --warn-lite:#FF9EA1;
+  --warn-soft:rgba(229,72,77,.10);
+  --ok:#2FB27C;
+  --ok-lite:#7CE0B6;
+  --ok-soft:rgba(47,178,124,.10);
+
+  --f-display:"Unbounded","Golos Text",system-ui,sans-serif;
+  --f-body:"Golos Text",system-ui,-apple-system,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,monospace;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--f-body);
+  font-size:17px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  scroll-snap-type:y proximity;
+  overflow-x:hidden;
+}
+/* сетка доски */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(var(--line-soft) 1px,transparent 1px),linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);
+  background-size:72px 72px;
+  -webkit-mask-image:radial-gradient(ellipse 90% 75% at 50% 42%,#000 35%,transparent 82%);
+  mask-image:radial-gradient(ellipse 90% 75% at 50% 42%,#000 35%,transparent 82%);
+}
+/* холодное свечение */
+body::after{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(60rem 40rem at 12% 0%,rgba(59,116,255,.10),transparent 65%);
+}
+p{margin:0}
+
+.fade{position:fixed;left:0;right:0;z-index:34;pointer-events:none;height:92px}
+.fade.top{top:0;background:linear-gradient(var(--ground) 22%,transparent)}
+.fade.bot{bottom:0;height:76px;background:linear-gradient(transparent,var(--ground) 72%)}
+#bar{position:fixed;top:0;left:0;height:2px;width:0;background:var(--brand);z-index:40;transition:width .12s linear;box-shadow:0 0 12px rgba(59,116,255,.7)}
+
+/* шапка-планка, попадает в каждый кадр записи */
+.slate{
+  position:fixed;z-index:35;top:22px;
+  font-family:var(--f-mono);font-size:11px;font-weight:500;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--dim);
+}
+.slate.left{left:38px;display:flex;align-items:center;gap:11px}
+.slate.left b{color:var(--ink);font-weight:700;letter-spacing:.2em}
+.slate.left em{width:6px;height:6px;background:var(--brand);font-style:normal;display:block}
+.slate.right{right:38px;font-variant-numeric:tabular-nums}
+.slate.right b{color:var(--ink);font-weight:700}
+
+.board{position:relative;z-index:1;max-width:1240px;margin-inline:auto;padding-inline:38px}
+.stage{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  gap:26px;padding-block:104px;scroll-snap-align:center;position:relative;
+}
+.stage + .stage::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--line) 12%,var(--line) 88%,transparent);
+}
+
+/* заголовочный блок */
+.head{display:flex;flex-direction:column;gap:16px}
+.eyebrow{
+  font-family:var(--f-mono);font-size:11px;font-weight:500;
+  letter-spacing:.24em;text-transform:uppercase;color:var(--dim);
+  display:flex;align-items:center;gap:12px;
+}
+.eyebrow::before{content:"";width:22px;height:2px;background:var(--brand);flex:none}
+.eyebrow.is-warn::before{background:var(--warn)}
+.eyebrow.is-ok::before{background:var(--ok)}
+.eyebrow::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,var(--line),transparent)}
+
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(46px,7.4vw,96px);line-height:.97;letter-spacing:-.025em;margin:0;text-wrap:balance}
+h2{font-family:var(--f-display);font-weight:800;font-size:clamp(30px,4.3vw,52px);line-height:1.06;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h3{font-family:var(--f-display);font-weight:600;font-size:19px;line-height:1.25;margin:0;letter-spacing:-.012em}
+.lede{font-size:clamp(17px,1.55vw,21px);color:var(--muted);max-width:60ch;text-wrap:pretty}
+.note{font-size:15px;color:var(--dim);max-width:64ch}
+.hl{color:var(--ink)}
+
+.cols{display:grid;gap:18px}
+.c2{grid-template-columns:repeat(2,1fr)}
+.c3{grid-template-columns:repeat(3,1fr)}
+.c2u{grid-template-columns:1.08fr .92fr}
+.stack{display:flex;flex-direction:column;gap:18px}
+
+.panel{
+  background:var(--panel);border:1px solid var(--line);border-radius:3px;
+  padding:26px 28px;display:flex;flex-direction:column;gap:14px;position:relative;
+  transition:border-color .35s ease,background .35s ease;
+}
+.panel:hover{border-color:#333947}
+.panel.flat{background:transparent}
+.panel.solid{background:var(--panel-2)}
+.panel.warn{border-color:rgba(229,72,77,.4);background:var(--warn-soft)}
+.panel.warn:hover{border-color:rgba(229,72,77,.62)}
+.panel.ok{border-color:rgba(47,178,124,.4);background:var(--ok-soft)}
+.panel.ok:hover{border-color:rgba(47,178,124,.62)}
+.panel.brand{border-color:rgba(59,116,255,.42);background:var(--brand-soft)}
+.panel.brand:hover{border-color:rgba(59,116,255,.66)}
+
+.tag{font-family:var(--f-mono);font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.tag.w{color:var(--warn)}
+.tag.o{color:var(--ok)}
+.tag.b{color:var(--brand-lite)}
+
+.quote{font-size:19px;line-height:1.45;letter-spacing:-.005em}
+.quote.w{color:var(--warn-lite)}
+.quote.o{color:var(--ok-lite)}
+
+/* призрачные цифры */
+.ghost{
+  position:absolute;right:20px;bottom:-8px;
+  font-family:var(--f-display);font-weight:800;font-size:132px;line-height:1;
+  color:rgba(255,255,255,.035);pointer-events:none;user-select:none;letter-spacing:-.04em;
+}
+
+.num{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--brand-lite);letter-spacing:.14em}
+
+/* рельс из трёх апгрейдов */
+.rail{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:3px;overflow:hidden;background:var(--panel)}
+.rail > div{padding:34px 30px 40px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:13px;position:relative;overflow:hidden;transition:background .35s}
+.rail > div:hover{background:var(--panel-2)}
+.rail > div:last-child{border-right:0}
+.rail h3{font-size:24px}
+.rail p{color:var(--muted);font-size:16px;max-width:30ch}
+
+/* путь по меню */
+.path{display:flex;flex-wrap:wrap;align-items:center;gap:9px;font-family:var(--f-mono);font-size:14px}
+.path span{border:1px solid var(--line);background:#0B0D11;padding:9px 15px;border-radius:2px}
+.path span:last-child{border-color:rgba(59,116,255,.55);color:var(--brand-lite);background:var(--brand-soft)}
+.path i{color:var(--dim);font-style:normal}
+
+ul.plain{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+ul.plain li{position:relative;padding-left:22px;color:var(--muted);font-size:16px}
+ul.plain li::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:1px;background:var(--dim)}
+ul.plain li b{color:var(--ink);font-weight:600}
+ul.ask li::before{content:"?";font-family:var(--f-mono);font-size:12px;color:var(--brand);top:.05em;width:auto;height:auto;background:none}
+ul.check li::before{content:"✓";font-family:var(--f-mono);font-size:12px;color:var(--ok);top:.05em;width:auto;height:auto;background:none}
+ul.cross li::before{content:"✕";font-family:var(--f-mono);font-size:11px;color:var(--warn);top:.15em;width:auto;height:auto;background:none}
+
+.mono{
+  font-family:var(--f-mono);font-size:15px;line-height:1.72;color:#C9CED6;
+  background:#0A0C10;border:1px solid var(--line);border-left:2px solid var(--brand);
+  padding:24px 26px;border-radius:2px;white-space:pre-wrap;overflow-x:auto;max-width:960px;
+}
+.mono.big{font-size:16px}
+.mono.w{border-left-color:var(--warn)}
+
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{font-family:var(--f-mono);font-size:13px;color:var(--muted);border:1px solid var(--line);padding:9px 15px;border-radius:999px;background:var(--panel)}
+.chip.b{color:var(--brand-lite);border-color:rgba(59,116,255,.42)}
+
+/* титул */
+.hero{gap:36px}
+.hero .kicker{font-family:var(--f-mono);font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:14px}
+.hero .kicker::after{content:"";height:1px;flex:1;max-width:220px;background:linear-gradient(90deg,var(--line),transparent)}
+.hero-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:10px}
+.hero-strip div{border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:6px;position:relative}
+.hero-strip div::before{content:"";position:absolute;top:-1px;left:0;width:38px;height:1px;background:var(--brand)}
+.hero-strip b{font-family:var(--f-display);font-weight:600;font-size:18px}
+.hero-strip span.d{color:var(--dim);font-size:14px}
+
+/* анкета с пустыми полями */
+.form{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:3px;background:#0B0D11}
+.form div{display:flex;align-items:center;gap:18px;padding:14px 20px;border-bottom:1px solid var(--line-soft)}
+.form div:last-child{border-bottom:0}
+.form label{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);width:190px;flex:none}
+.form s{flex:1;height:1px;border-bottom:1px dashed #2E333E;text-decoration:none}
+.form em{font-family:var(--f-mono);font-size:12px;color:var(--warn);font-style:normal;letter-spacing:.1em}
+
+/* тумблер памяти */
+.toggle{display:flex;align-items:center;gap:16px}
+.toggle .sw{width:56px;height:30px;border-radius:999px;background:var(--brand);position:relative;flex:none;box-shadow:0 0 22px rgba(59,116,255,.45)}
+.toggle .sw::after{content:"";position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:#fff}
+.toggle b{font-family:var(--f-display);font-weight:600;font-size:18px}
+.toggle span{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ok)}
+
+/* шаги */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.steps > div{padding:26px 28px;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:11px;position:relative}
+.steps > div:last-child{border-right:0}
+.steps > div:not(:last-child)::after{
+  content:"";position:absolute;right:-6px;top:50%;transform:translateY(-50%) rotate(45deg);
+  width:10px;height:10px;border-top:1px solid var(--line);border-right:1px solid var(--line);
+  background:var(--panel);z-index:2;
+}
+.steps p{color:var(--muted);font-size:16px}
+
+/* циферблат 30 секунд */
+.dial{display:flex;align-items:center;gap:30px;flex-wrap:wrap}
+.dial svg{width:150px;height:150px;flex:none}
+.dial .ring{fill:none;stroke:var(--line);stroke-width:2}
+.dial .arc{fill:none;stroke:var(--warn);stroke-width:3;stroke-linecap:round;filter:drop-shadow(0 0 6px rgba(229,72,77,.5))}
+.dial .tick{stroke:#39404C;stroke-width:2}
+.dial text{font-family:var(--f-mono);font-weight:700;fill:var(--ink)}
+
+/* развилка */
+.fork{width:100%;max-width:760px;margin-inline:auto;display:block;aspect-ratio:760/104;height:auto}
+.fork path{fill:none;stroke-width:1.5}
+.fork .stem{stroke:#3A414E}
+.fork .l{stroke:var(--warn);opacity:.8}
+.fork .r{stroke:var(--ok);opacity:.8}
+.fork .cap{stroke:none}
+
+/* было / стало */
+.ba{display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:center}
+.ba .arrow{font-family:var(--f-mono);font-size:22px;color:var(--dim)}
+
+#nav{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:30;display:flex;flex-direction:column;gap:12px;align-items:flex-end}
+#nav button{
+  width:22px;height:9px;padding:0;border:0;cursor:pointer;background:#2C313B;border-radius:1px;
+  transition:background .25s,width .25s;
+}
+#nav button:hover{background:#4A515E}
+#nav button[aria-current="true"]{background:var(--brand);width:34px;box-shadow:0 0 12px rgba(59,116,255,.6)}
+#nav button:focus-visible{outline:2px solid var(--brand);outline-offset:3px}
+#hint{position:fixed;left:38px;bottom:22px;z-index:30;font-family:var(--f-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+
+[data-reveal]{opacity:0;transform:translateY(18px);transition:opacity .6s cubic-bezier(.22,.7,.3,1),transform .6s cubic-bezier(.22,.7,.3,1)}
+[data-reveal].in{opacity:1;transform:none}
+[data-reveal]:nth-child(2){transition-delay:.06s}
+[data-reveal]:nth-child(3){transition-delay:.12s}
+[data-reveal]:nth-child(4){transition-delay:.18s}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  [data-reveal]{opacity:1;transform:none;transition:none}
+  #bar{transition:none}
+}
+@media (max-width:1360px){
+  .board{padding-inline:38px 76px}
+}
+@media (max-width:920px){
+  .board{padding-inline:22px}
+  .c2,.c3,.c2u,.rail,.hero-strip,.steps{grid-template-columns:1fr}
+  .ba{grid-template-columns:1fr}
+  .ba .arrow{transform:rotate(90deg);text-align:center}
+  .rail > div,.steps > div{border-right:0;border-bottom:1px solid var(--line)}
+  .rail > div:last-child,.steps > div:last-child{border-bottom:0}
+  .steps > div::after{display:none}
+  #nav,#hint,.slate{display:none}
+  .stage{min-height:auto;padding-block:66px}
+  .form label{width:130px}
+  .ghost{font-size:88px}
+}
+</style>
+
+<div id="bar"></div>
+<div class="fade top"></div>
+<div class="fade bot"></div>
+<div class="slate left"><em></em><b>THE MHS</b><span>Эпизод 1</span></div>
+<div class="slate right"><b id="cnum">01</b> / 13</div>
+<nav id="nav" aria-label="Разделы"></nav>
+<div id="hint">↑ ↓ — экраны</div>
+
+<div class="board">
+
+<!-- 01 ТИТУЛ -->
+<section class="stage hero" data-title="Титул">
+  <p class="kicker" data-reveal>IT-стартап-студия · настройка ChatGPT</p>
+  <h1 data-reveal>Ваш ChatGPT<br>вас не знает</h1>
+  <p class="lede" data-reveal>За одно видео ставим три апгрейда — и обычный чат превращается в ассистента, который понимает контекст, помнит важное и спорит, когда вы неправы.</p>
+  <div class="hero-strip">
+    <div data-reveal><span class="num">01</span><b>Контекст</b><span class="d">Кто вы и чем заняты</span></div>
+    <div data-reveal><span class="num">02</span><b>Память</b><span class="d">Что изменилось с тех пор</span></div>
+    <div data-reveal><span class="num">03</span><b>Критика</b><span class="d">Проверка идей на прочность</span></div>
+  </div>
+</section>
+
+<!-- 02 ХУК -->
+<section class="stage" data-title="Два ответа">
+  <div class="head">
+    <p class="eyebrow" data-reveal>Демонстрация · два окна, один вопрос</p>
+    <h2 data-reveal>Один вопрос.<br>Два разных ответа.</h2>
+  </div>
+  <div class="mono" data-reveal>«Стоит ли мне сейчас запускать новый проект — ИИ, который делает прогнозы на ставки?»</div>
+  <svg class="fork" viewBox="0 0 760 104" aria-hidden="true">
+    <path class="stem" d="M380 2 L380 40"/>
+    <path class="l" d="M380 40 C380 76 120 62 120 100"/>
+    <path class="r" d="M380 40 C380 76 640 62 640 100"/>
+    <circle class="cap" cx="380" cy="40" r="4" fill="#3A414E"/>
+    <circle class="cap" cx="120" cy="100" r="4.5" fill="#E5484D"/>
+    <circle class="cap" cx="640" cy="100" r="4.5" fill="#2FB27C"/>
+  </svg>
+  <div class="cols c2">
+    <div class="panel warn" data-reveal>
+      <p class="tag w">Окно 1 · знает о вас ничего</p>
+      <p class="quote w">«Отличный продукт. Вот как его правильно запускать.»</p>
+      <p class="note">Всё правильно. И абсолютно бесполезно.</p>
+    </div>
+    <div class="panel ok" data-reveal>
+      <p class="tag o">Окно 2 · знает цели, проекты, приоритеты</p>
+      <p class="quote o">«Нет. Этот проект не ведёт тебя к основной цели — и это не лучшее вложение твоего времени.»</p>
+      <p class="note">Ответ, который меняет решение.</p>
+    </div>
+  </div>
+  <p class="note" data-reveal>Разница не в модели. Разница в том, что она о вас знает.</p>
+</section>
+
+<!-- 03 КАРТА -->
+<section class="stage" data-title="Три апгрейда">
+  <div class="head">
+    <p class="eyebrow" data-reveal>Карта эпизода</p>
+    <h2 data-reveal>Три апгрейда</h2>
+  </div>
+  <div class="rail" data-reveal>
+    <div>
+      <span class="num">01</span>
+      <h3>Контекст</h3>
+      <p>Один раз объясняем, кто вы, чем занимаетесь и какие ответы вам нужны.</p>
+      <span class="ghost">1</span>
+    </div>
+    <div>
+      <span class="num">02</span>
+      <h3>Память</h3>
+      <p>Всё, что появилось после первого дня, накапливается и переезжает в новые чаты.</p>
+      <span class="ghost">2</span>
+    </div>
+    <div>
+      <span class="num">03</span>
+      <h3>Критическое мышление</h3>
+      <p>Модель перестаёт поддакивать и начинает искать слабые места в ваших идеях.</p>
+      <span class="ghost">3</span>
+    </div>
+  </div>
+  <p class="note" data-reveal>Порядок важен: третий апгрейд без первых двух почти не работает.</p>
+</section>
+
+<!-- 04 АПГРЕЙД 1 -->
+<section class="stage" data-title="Апгрейд 1 · Контекст">
+  <div class="head">
+    <p class="eyebrow" data-reveal>Апгрейд 01 · Контекст</p>
+    <h2 data-reveal>Информация о вас</h2>
+    <p class="lede" data-reveal>Представьте, что вы наняли невероятно умного ассистента — и ничего ему о себе не рассказали.</p>
+  </div>
+  <div class="cols c2u">
+    <div class="form" data-reveal>
+      <div><label>Кто вы</label><s></s><em>не заполнено</em></div>
+      <div><label>Чем занимаетесь</label><s></s><em>не заполнено</em></div>
+      <div><label>Уровень знаний</label><s></s><em>не заполнено</em></div>
+      <div><label>Цели</label><s></s><em>не заполнено</em></div>
+      <div><label>Что раздражает</label><s></s><em>не заполнено</em></div>
+    </div>
+    <div class="stack">
+      <div class="panel solid" data-reveal>
+        <p class="tag b">Куда идти</p>
+        <div class="path"><span>Настройки</span><i>›</i><span>Персонализация</span><i>›</i><span>Пользовательские инструкции</span></div>
+      </div>
+      <div class="panel warn" data-reveal>
+        <p class="tag w">Что происходит без этого</p>
+        <p>Усреднённые ответы для усреднённого человека.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 ИНТЕРВЬЮЕР -->
+<section class="stage" data-title="Промпт-интервьюер">
+  <div class="head">
+    <p class="eyebrow" data-reveal>Апгрейд 01 · инструмент</p>
+    <h2 data-reveal>Промпт-интервьюер</h2>
+    <p class="lede" data-reveal>Вставляете его в ChatGPT — он сам вас опрашивает, а потом собирает готовую пользовательскую инструкцию.</p>
+  </div>
+  <div class="cols c2u">
+    <div class="panel" data-reveal>
+      <p class="tag b">О чём он спрашивает</p>
+      <ul class="plain ask">
+        <li>Чем вы занимаетесь</li>
+        <li>Какие задачи решаете</li>
+        <li>Какой у вас уровень знаний</li>
+        <li>Какие у вас цели</li>
+        <li>В каком формате удобно получать информацию</li>
+        <li>Насколько подробно объяснять</li>
+        <li>Нужно ли с вами спорить</li>
+        <li>Какие у вас основные проекты</li>
+      </ul>
+      <span class="ghost">?</span>
+    </div>
+    <div class="stack">
+      <div class="panel warn" data-reveal>
+        <p class="tag w">Было</p>
+        <p class="quote w">«Расскажи мне, что такое воронка продаж.»</p>
+      </div>
+      <div class="panel ok" data-reveal>
+        <p class="tag o">Стало</p>
+        <p class="quote o">«Передо мной человек с опытом в маркетинге. Базовые определения не нужны — сразу к архитектуре, экономике и практике.»</p>
+      </div>
+      <div class="panel brand" data-reveal>
+        <p class="hl">Мы не сделали модель умнее. Мы дали ей правильный контекст.</p>
+      </div>
+    </div>
+  </div>
+  <p class="note" data-reveal>Промпт лежит бесплатно в Telegram-канале THE MHS — ссылка под видео. Но сначала досмотрите настройку целиком.</p>
+</section>
+
+<!-- 06 АПГРЕЙД 2 -->
+<section class="stage" data-title="Апгрейд 2 · Память">
+  <div class="head">
+    <p class="eyebrow" data-reveal>Апгрейд 02 · Память</p>
+    <h2 data-reveal>Инструкция — это сегодня.<br>А что с завтра?</h2>
+  </div>
+  <div class="cols c2u">
+    <div class="panel" data-reveal>
+      <p class="tag">Через неделю вы скажете</p>
+      <p class="quote">«Я больше не хочу работать с этим сегментом клиентов.»</p>
+      <p class="quote">«Мы изменили позиционирование продукта.»</p>
+    </div>
+    <div class="panel solid" data-reveal>
+      <p class="tag b">Куда идти</p>
+      <div class="path"><span>Настройки</span><i>›</i><span>Персонализация</span><i>›</i><span>Память</span></div>
+      <div class="toggle"><span class="sw"></span><b>Память</b><span>включена</span></div>
+      <p class="note">Рядом, в зависимости от аккаунта, — сохранённые воспоминания и использование истории чатов.</p>
+    </div>
+  </div>
+  <div class="cols c2">
+    <div class="panel flat" data-reveal>
+      <p class="tag">Пользовательская инструкция</p>
+      <p>Бриф, который вы выдали сотруднику в первый день.</p>
+    </div>
+    <div class="panel flat" data-reveal>
+      <p class="tag">Память</p>
+      <p>Контекст, который накопился, пока вы работали вместе.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 РЕВИЗИЯ -->
+<section class="stage" data-title="Ревизия памяти">
+  <div class="head">
+    <p class="eyebrow" data-reveal>Апгрейд 02 · регламент</p>
+    <h2 data-reveal>Памятью нужно управлять</h2>
+  </div>
+  <div class="mono big" data-reveal>Что ты помнишь обо мне?</div>
+  <div class="steps" data-reveal>
+    <div><span class="num">Шаг 1</span><p>Спросите и посмотрите, совпадает ли его представление о вас с реальностью.</p></div>
+    <div><span class="num">Шаг 2</span><p>Устаревшее — удаляйте. Неточное — исправляйте.</p></div>
+    <div><span class="num">Шаг 3</span><p>Повторяйте периодически: часть информации протухает.</p></div>
+  </div>
+  <p class="lede" data-reveal>Вы не просто дольше пользуетесь одним ChatGPT. Вы постепенно строите вокруг него точный контекст своей жизни и работы.</p>
+</section>
+
+<!-- 08 ОПАСНОСТЬ -->
+<section class="stage" data-title="Опасность">
+  <div class="head">
+    <p class="eyebrow is-warn" data-reveal>Самая опасная часть видео</p>
+    <h2 data-reveal>Персональный ассистент убедительнее<br>подтверждает вашу ошибку</h2>
+  </div>
+  <div class="cols c2">
+    <div class="panel warn" data-reveal>
+      <p class="tag w">Чат 1</p>
+      <p class="quote w">«Мне кажется, это гениальная бизнес-идея.»</p>
+      <p class="note">→ пять причин, почему она действительно интересная.</p>
+    </div>
+    <div class="panel warn" data-reveal>
+      <p class="tag w">Чат 2 · та же идея</p>
+      <p class="quote w">«Мне кажется, эта бизнес-идея ужасная.»</p>
+      <p class="note">→ пять причин, почему она ужасная.</p>
+    </div>
+  </div>
+  <div class="panel" data-reveal>
+    <p class="tag">Почему так</p>
+    <p>Модель не сидит внутри компьютера с собственным мнением и жизненной позицией. Она генерирует наиболее подходящий ответ в контексте вашего разговора — и склонна чрезмерно соглашаться с вами.</p>
+    <p class="note">Проблема настолько реальная, что разработчики моделей отдельно работают над её уменьшением.</p>
+  </div>
+</section>
+
+<!-- 09 АПГРЕЙД 3 -->
+<section class="stage" data-title="Апгрейд 3 · Критика">
+  <div class="head">
+    <p class="eyebrow" data-reveal>Апгрейд 03 · Критическое мышление</p>
+    <h2 data-reveal>Правило, которое я добавляю<br>в пользовательские инструкции</h2>
+  </div>
+  <div class="mono" data-reveal>Не соглашайся со мной автоматически.
+Если мои предположения слабые, противоречат фактам
+или строятся на ошибочной логике — прямо скажи об этом.
+
+Отделяй факты от предположений.
+Ищи сильнейший контраргумент моей позиции.
+Если для уверенного вывода не хватает информации —
+скажи, чего именно не хватает.
+
+Твоя задача не подтвердить моё мнение,
+а помочь мне прийти к наиболее точному выводу.</div>
+  <div class="cols c2">
+    <div class="panel" data-reveal>
+      <p class="tag">Обычный режим</p>
+      <p class="quote">Сразу начинает строить план.</p>
+    </div>
+    <div class="panel ok" data-reveal>
+      <p class="tag o">Наш режим</p>
+      <p class="quote o">«Стоп. Эта идея противоречит твоим целям.»</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 АДВОКАТ ДЬЯВОЛА -->
+<section class="stage" data-title="Адвокат дьявола">
+  <div class="head">
+    <p class="eyebrow" data-reveal>Апгрейд 03 · усиление</p>
+    <h2 data-reveal>Мне не нужен цифровой человек,<br>который говорит «ты красавчик»</h2>
+    <p class="lede" data-reveal>Мне нужен человек по ту сторону стола, который иногда говорит: «Нет. Здесь ты ошибаешься».</p>
+  </div>
+  <div class="cols c2">
+    <div class="panel solid" data-reveal>
+      <p class="tag b">Скиллы для ChatGPT</p>
+      <p>Готовые наборы инструкций, которые задают модели конкретный способ работы: роль, правила, последовательность действий, формат ответа и использование инструментов.</p>
+    </div>
+    <div class="panel brand" data-reveal>
+      <p class="tag b">Адвокат дьявола</p>
+      <p>Режим критического мышления: специально ищем слабые места в утверждении, выдвигаем сильные контраргументы и проверяем, выдерживает ли вывод критику.</p>
+      <p class="note">Цель — не спор ради спора, а меньше ошибок и самообмана.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 ФАКТЧЕК -->
+<section class="stage" data-title="Правило 30 секунд">
+  <div class="head">
+    <p class="eyebrow is-warn" data-reveal>Держать в голове постоянно</p>
+    <h2 data-reveal>Модель врёт.<br>Правило тридцати секунд</h2>
+  </div>
+  <div class="dial" data-reveal>
+    <svg viewBox="0 0 120 120" aria-hidden="true">
+      <circle class="ring" cx="60" cy="60" r="50"/>
+      <path class="arc" d="M60 10 A50 50 0 1 1 10.9 70.4"/>
+      <g class="tick">
+        <line x1="60" y1="12" x2="60" y2="20"/>
+        <line x1="108" y1="60" x2="100" y2="60"/>
+        <line x1="60" y1="108" x2="60" y2="100"/>
+        <line x1="12" y1="60" x2="20" y2="60"/>
+      </g>
+      <text x="60" y="58" text-anchor="middle" font-size="30">30</text>
+      <text x="60" y="76" text-anchor="middle" font-size="11" fill="#828892" letter-spacing="2">СЕК</text>
+    </svg>
+    <div class="stack" style="gap:14px">
+      <p class="lede">Всё, что можно проверить за тридцать секунд, надо проверять за тридцать секунд.</p>
+      <div class="chips">
+        <span class="chip">цифры</span>
+        <span class="chip">даты</span>
+        <span class="chip">фамилии</span>
+        <span class="chip">номера законов</span>
+        <span class="chip">названия книг</span>
+      </div>
+      <p class="note">Именно на этом модели спотыкаются чаще всего.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 ИТОГ -->
+<section class="stage" data-title="Было / Стало">
+  <div class="head">
+    <p class="eyebrow is-ok" data-reveal>Итог первой ступени</p>
+    <h2 data-reveal>Сравните</h2>
+  </div>
+  <div class="ba">
+    <div class="panel warn" data-reveal>
+      <p class="tag w">В начале видео</p>
+      <ul class="plain cross">
+        <li>Не знает, кто вы</li>
+        <li>Забывает всё между чатами</li>
+        <li>Соглашается с любой вашей идеей</li>
+        <li>Уверенно выдаёт непроверенные факты</li>
+      </ul>
+    </div>
+    <div class="arrow" data-reveal>→</div>
+    <div class="panel ok" data-reveal>
+      <p class="tag o">Сейчас</p>
+      <ul class="plain check">
+        <li>Знает постоянный контекст о вас</li>
+        <li>Использует полезное из прошлых разговоров</li>
+        <li>Не обязан автоматически соглашаться</li>
+        <li>Умеет специально атаковать ваши гипотезы</li>
+        <li>Получил протокол проверки фактов</li>
+      </ul>
+    </div>
+  </div>
+  <p class="lede" data-reveal>И это только фундамент.</p>
+</section>
+
+<!-- 13 ДАЛЬШЕ -->
+<section class="stage" data-title="Следующий эпизод">
+  <div class="head">
+    <p class="eyebrow" data-reveal>Эпизод 2</p>
+    <h2 data-reveal>Почему большинство<br>до сих пор неправильно пишет промпты</h2>
+  </div>
+  <div class="cols c2">
+    <div class="panel" data-reveal>
+      <ul class="plain">
+        <li><b>Структура промпта</b>, которой пользуюсь сам</li>
+        <li><b>Сложные задачи</b> по заданному алгоритму</li>
+        <li><b>50 лучших скиллов</b> — готовая подборка</li>
+        <li><b>Где искать</b> скиллы и как писать свои</li>
+      </ul>
+    </div>
+    <div class="panel brand" data-reveal>
+      <p class="tag b">Забрать из этого выпуска</p>
+      <ul class="plain">
+        <li>Промпт-интервьюер</li>
+        <li>Инструкция критического мышления</li>
+        <li>Адвокат дьявола</li>
+      </ul>
+      <p class="note">Бесплатно, по ссылке в описании.</p>
+    </div>
+  </div>
+  <p class="lede" data-reveal>Владельцам бизнеса, которым нужны такие системы для всей команды, — контакты под видео.</p>
+  <p class="eyebrow" data-reveal>Это была первая ступень. Увидимся в следующей.</p>
+</section>
+
+</div>
+
+<script>
+(function(){
+  var stages = Array.prototype.slice.call(document.querySelectorAll('.stage'));
+  var nav = document.getElementById('nav');
+  var bar = document.getElementById('bar');
+  var cnum = document.getElementById('cnum');
+
+  stages.forEach(function(s, i){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', s.dataset.title || ('Экран ' + (i + 1)));
+    b.addEventListener('click', function(){ s.scrollIntoView({block:'center'}); });
+    nav.appendChild(b);
+  });
+  var dots = Array.prototype.slice.call(nav.children);
+  dots[0].setAttribute('aria-current','true');
+
+  var current = 0;
+  function setCurrent(i){
+    if (i === current) return;
+    current = i;
+    dots.forEach(function(d, n){ d.setAttribute('aria-current', n === i ? 'true' : 'false'); });
+    cnum.textContent = (i + 1 < 10 ? '0' : '') + (i + 1);
+  }
+
+  var spy = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if (e.isIntersecting) setCurrent(stages.indexOf(e.target)); });
+  }, {rootMargin:'-45% 0px -45% 0px'});
+  stages.forEach(function(s){ spy.observe(s); });
+
+  var reveal = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting){ e.target.classList.add('in'); reveal.unobserve(e.target); }
+    });
+  }, {rootMargin:'240px 0px 240px 0px'});
+  document.querySelectorAll('[data-reveal]').forEach(function(el){ reveal.observe(el); });
+
+  function onScroll(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  document.addEventListener('keydown', function(e){
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var dir = 0;
+    if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') dir = 1;
+    if (e.key === 'ArrowUp' || e.key === 'PageUp') dir = -1;
+    if (!dir) return;
+    e.preventDefault();
+    var next = Math.min(stages.length - 1, Math.max(0, current + dir));
+    stages[next].scrollIntoView({block:'center'});
+  });
+})();
+</script>

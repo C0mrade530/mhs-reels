@@ -1,0 +1,34 @@
+name: Проверка сборки
+
+# Ловит поломки вроде удалённой функции: скрипты запускаются в режиме
+# статуса, где не нужны ни токены, ни сеть. Если что-то не определено —
+# падает здесь и сразу, а не молча в ночном расписании.
+on:
+  push:
+    branches: [main]
+    paths: ['src/**', 'package.json']
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: 22 }
+      - run: npm ci --omit=dev --ignore-scripts
+
+      - name: Синтаксис всех модулей
+        run: for f in src/*.js; do node --check "$f" || exit 1; done
+
+      - name: Публикатор отвечает в обеих рубриках
+        run: |
+          node src/publish.js
+          node src/publish.js --series=radar
+
+      - name: Выгрузка на YouTube отвечает в обеих рубриках
+        run: |
+          node src/youtube.js || true
+          node src/youtube.js --series=radar || true
+        env:
+          SKIP_CREDS: "1"

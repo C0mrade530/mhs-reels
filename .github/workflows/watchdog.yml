@@ -45,6 +45,13 @@ jobs:
           RADAR_MEDIA_BASE_URL: https://github.com/C0mrade530/mhs-reels/releases/download/media-v1
           POST_TIMES: 12:00,15:00,18:00
           RADAR_POST_TIMES: 13:00,16:00,19:00
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+          YOUTUBE_PRIVACY: ${{ vars.YOUTUBE_PRIVACY || 'private' }}
+          YT_MEDIA_BASE_URL: https://github.com/C0mrade530/mhs-reels/releases/download/media-v1
+          YT_POST_TIMES: 12:00,15:00,18:00
+          YT_RADAR_POST_TIMES: 13:00,16:00,19:00
         run: |
           git config user.name  "mhs-publisher"
           git config user.email "actions@github.com"
@@ -52,9 +59,13 @@ jobs:
           while [ "$(date +%s)" -lt "$END" ]; do
             for series in prompts radar; do
               node src/publish.js --series="$series" --next --confirm --if-due || true
+              # YouTube тоже опрашиваем каждые пять минут: его собственный крон
+              # GitHub запускает раз в несколько часов, и слоты терялись
+              node src/youtube.js --series="$series" --next --confirm --if-due || true
             done
             if [ -n "$(git status --porcelain output/)" ]; then
-              git add output/publish-state.json output/radar-publish-state.json
+              git add output/publish-state.json output/radar-publish-state.json \
+                      output/youtube-state.json output/youtube-radar-state.json
               git commit -m "очередь: опубликован очередной ролик"
             fi
             # неотправленный коммит повторяем на следующем тике, иначе

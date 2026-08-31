@@ -376,6 +376,23 @@ async function main() {
       console.log(c.dim(`  IG_DM_TOKEN задан: ${dmSet ? 'да' : 'нет'}`));
       console.log(c.dim(`  совпадает с токеном публикации: ${same ? 'ДА' : 'нет'}`));
 
+      /* Спрашиваем у Meta, что на самом деле лежит в токене. Разрешения
+         приложения и разрешения токена — разные вещи: первые лишь
+         разрешают просить, вторые человек подтверждает на экране
+         согласия. Проверяем вторые, а не первые. */
+      for (const host of [CFG.host, 'graph.facebook.com']) {
+        const u = `https://${host}/${CFG.version}/debug_token?input_token=${encodeURIComponent(CFG.token)}&access_token=${encodeURIComponent(CFG.token)}`;
+        try {
+          const b = await call(u);
+          const d = b.data || {};
+          console.log(c.b(`  права токена (${host}):`));
+          console.log(`    ${(d.scopes || d.granular_scopes || []).length ? JSON.stringify(d.scopes || d.granular_scopes) : 'список не отдан'}`);
+          console.log(c.dim(`    тип ${d.type || '?'}, живой ${d.is_valid}, приложение ${d.app_id || '?'}`));
+        } catch (e) {
+          console.log(c.dim(`  права токена (${host}): ${e.message}`));
+        }
+      }
+
       // Тот же пост вторым токеном: вдруг права оказались как раз у него.
       const other = process.env.IG_ACCESS_TOKEN;
       if (other && other !== CFG.token) {

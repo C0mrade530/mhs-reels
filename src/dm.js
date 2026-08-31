@@ -55,7 +55,13 @@ const CFG = {
     : String(TOKEN || '').startsWith('IGAA')
       ? 'graph.instagram.com'
       : 'graph.facebook.com',
-  keyword: (val('keyword', process.env.DM_KEYWORD || 'skill')).toLowerCase(),
+  /* Ищем по кускам слова, а не по слову целиком: «скил» ловит и «скилл»,
+     и «скилы», а «skil» — и «skill», и «skils». Так одна короткая строка
+     закрывает все написания разом. */
+  keywords: val('keyword', process.env.DM_KEYWORD || 'skil,скил')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean),
   // Сколько постов проверять с конца ленты. Комментарии старше недели всё
   // равно недоступны для директа, глубже лезть незачем.
   posts: Number(val('posts', 25)),
@@ -309,6 +315,26 @@ function isSystemic(err) {
   return SYSTEMIC_CODES.has(Number(err.code));
 }
 
+/*
+ * Русскоязычные комментарии пишут вперемешку: «skill», «скилл», «скил», а
+ * нередко и гибридом — кириллическое слово с латинской «c» или «o», потому
+ * что раскладка не переключилась. Глазами это одно и то же слово, для
+ * строкового сравнения — разные.
+ *
+ * Поэтому перед сравнением приводим латинские буквы-двойники к кириллице.
+ * Делаем это с обеих сторон, и с текстом, и с искомым словом, — тогда
+ * чисто латинское «skill» тоже совпадёт само с собой.
+ */
+const LOOKALIKE = { a: 'а', c: 'с', e: 'е', o: 'о', p: 'р', x: 'х', y: 'у', k: 'к', m: 'м', t: 'т', b: 'ь', h: 'н' };
+
+function normalize(s) {
+  return String(s || '')
+    .toLowerCase()
+    .replace(/[acepxykmtbh]/g, (ch) => LOOKALIKE[ch]);
+}
+
+const NEEDLES = CFG.keywords.map(normalize);
+
 const ageDays = (iso) => (Date.now() - new Date(iso).getTime()) / 86400000;
 
 async function main() {
@@ -318,7 +344,7 @@ async function main() {
   }
 
   line();
-  console.log(c.b(`  Комментарии со словом «${CFG.keyword}» → директ`));
+  console.log(c.b(`  Комментарии со словом «${CFG.keywords.join('», «')}» → директ`));
   line();
 
   const me = await resolveMe();
@@ -421,7 +447,7 @@ async function main() {
     const flat = comments.flatMap((x) => [x, ...((x.replies && x.replies.data) || [])]);
     for (const cm of flat) {
       scanned++;
-      if (!cm.text || !cm.text.toLowerCase().includes(CFG.keyword)) continue;
+      if (!cm.text || !NEEDLES.some((n) => normalize(cm.text).includes(n))) continue;
       if (cm.username && me.username && cm.username === me.username) continue; // свои же ответы
       if (done.has(cm.id)) continue;
       const rec = {
@@ -439,7 +465,7 @@ async function main() {
   fs.mkdirSync(path.dirname(QUEUE), { recursive: true });
   fs.writeFileSync(
     QUEUE,
-    JSON.stringify({ keyword: CFG.keyword, scanned, fresh, stale }, null, 2) + '\n',
+    JSON.stringify({ keywords: CFG.keywords, scanned, counted, fresh, stale }, null, 2) + '\n',
     'utf8'
   );
 
@@ -452,7 +478,7 @@ async function main() {
       c.warn('  Счётчик не пуст, а комментарии не пришли — похоже на нехватку прав на чтение.')
     );
   }
-  console.log(`  со словом «${CFG.keyword}»: ${c.b(fresh.length + stale.length)}`);
+  console.log(`  подходящих по слову: ${c.b(fresh.length + stale.length)}`);
   console.log(`  ${c.ok('можно в директ')} (моложе ${WINDOW_DAYS} суток): ${c.b(fresh.length)}`);
   console.log(`  ${c.warn('окно закрыто')} (старше ${WINDOW_DAYS} суток): ${c.b(stale.length)}`);
   console.log(`  уже отвечено раньше: ${c.b(done.size)}`);

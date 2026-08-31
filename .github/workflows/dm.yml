@@ -18,9 +18,9 @@ on:
   workflow_dispatch:
     inputs:
       keyword:
-        description: Слово-триггер в комментарии
+        description: Слова-триггеры через запятую (кусок слова тоже подходит)
         type: string
-        default: skill
+        default: skil,скил
       send:
         description: Отправить (без галочки — только посчитать)
         type: boolean
@@ -78,7 +78,7 @@ jobs:
           # По расписанию inputs пустые — подставляем свои значения.
           # Порция в 20 человек за прогон, восемь прогонов в сутки: и очередь
           # разбирается за день, и аккаунт не выглядит рассылочной машиной.
-          args=(--keyword="${KEYWORD:-skill}" --limit="${LIMIT:-20}" --posts="${POSTS:-60}")
+          args=(--keyword="${KEYWORD:-skil,скил}" --limit="${LIMIT:-20}" --posts="${POSTS:-60}")
           if [[ "$EVENT" == "schedule" ]]; then
             [[ "$AUTOSEND" == "on" ]] && args+=(--send)
           else
@@ -96,7 +96,8 @@ jobs:
               const q = require('./output/dm-queue.json');
               const rows = (a) => a.map(x => '| @' + (x.username||'—') + ' | ' + x.age_days + ' сут | ' + x.permalink + ' |').join('\n');
               const md = [
-                '## Комментарии со словом «' + q.keyword + '»','',
+                '## Комментарии со словом «' + q.keywords.join('», «') + '»','',
+                '- комментариев по счётчику Instagram: ' + q.counted,
                 '- просмотрено: ' + q.scanned,
                 '- можно в директ: ' + q.fresh.length,
                 '- окно закрыто: ' + q.stale.length,'',

@@ -342,6 +342,35 @@ async function main() {
     } else {
       line();
       console.log(c.b(`  Отладка на посте ${m.id} (${m.comments_count} комментариев)`));
+
+      /* Про секреты говорим только «да/нет», ничего производного от них
+         в лог не кладём: важно лишь, подменили токен или вставили тот же. */
+      const dmSet = Boolean(process.env.IG_DM_TOKEN);
+      const same = dmSet && process.env.IG_DM_TOKEN === process.env.IG_ACCESS_TOKEN;
+      console.log(c.dim(`  IG_DM_TOKEN задан: ${dmSet ? 'да' : 'нет'}`));
+      console.log(c.dim(`  совпадает с токеном публикации: ${same ? 'ДА' : 'нет'}`));
+
+      // Тот же пост вторым токеном: вдруг права оказались как раз у него.
+      const other = process.env.IG_ACCESS_TOKEN;
+      if (other && other !== CFG.token) {
+        try {
+          const b = await call(API(`${m.id}/comments?fields=id,text&limit=5&access_token=${encodeURIComponent(other)}`));
+          console.log(c.dim(`  вторым токеном пришло ${(b.data || []).length}`));
+        } catch (e) {
+          console.log(c.dim(`  вторым токеном: ${e.message}`));
+        }
+      }
+
+      // Комментарии вложенным полем в ленте — другой путь к тем же данным.
+      try {
+        const b = await call(
+          API(`${CFG.userId}/media?fields=id,comments_count,comments{id,text,username}&limit=5&access_token=${encodeURIComponent(CFG.token)}`)
+        );
+        const withC = (b.data || []).map((x) => `${x.comments_count}→${(x.comments?.data || []).length}`);
+        console.log(c.dim(`  вложенным полем (счётчик→пришло): ${withC.join(', ')}`));
+      } catch (e) {
+        console.log(c.dim(`  вложенным полем: ${e.message}`));
+      }
       for (const fields of ['id', 'id,text', 'id,text,username,timestamp', 'id,text,username,timestamp,replies{id,text,username,timestamp}']) {
         const url = API(`${m.id}/comments?fields=${fields}&limit=5&access_token=${encodeURIComponent(CFG.token)}`);
         try {

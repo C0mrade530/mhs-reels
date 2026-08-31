@@ -335,6 +335,12 @@ async function main() {
   const state = loadState();
   const done = new Set(state.sent.map((s) => s.comment_id));
 
+  /* Instagram отдаёт счётчик комментариев прямо в посте. Сверяем его с тем,
+     что реально пришло: расхождение означает, что комментарии есть, а нам их
+     не показывают — совсем другая болезнь, чем «их просто нет». */
+  const counted = media.reduce((n, m) => n + Number(m.comments_count || 0), 0);
+  const withComments = media.filter((m) => Number(m.comments_count || 0) > 0).length;
+
   const fresh = [];
   const stale = [];
   let scanned = 0;
@@ -374,7 +380,14 @@ async function main() {
   );
 
   line();
+  console.log(`  постов с комментариями: ${c.b(withComments)} из ${media.length}`);
+  console.log(`  комментариев по счётчику Instagram: ${c.b(counted)}`);
   console.log(`  просмотрено комментариев: ${c.b(scanned)}`);
+  if (counted > 0 && scanned === 0) {
+    console.log(
+      c.warn('  Счётчик не пуст, а комментарии не пришли — похоже на нехватку прав на чтение.')
+    );
+  }
   console.log(`  со словом «${CFG.keyword}»: ${c.b(fresh.length + stale.length)}`);
   console.log(`  ${c.ok('можно в директ')} (моложе ${WINDOW_DAYS} суток): ${c.b(fresh.length)}`);
   console.log(`  ${c.warn('окно закрыто')} (старше ${WINDOW_DAYS} суток): ${c.b(stale.length)}`);

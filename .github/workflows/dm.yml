@@ -19,6 +19,10 @@ on:
         description: Максимум сообщений за запуск (0 — без предела)
         type: string
         default: '0'
+      posts:
+        description: Сколько постов проверять с конца ленты
+        type: string
+        default: '25'
 
 concurrency:
   group: dm
@@ -49,8 +53,9 @@ jobs:
           KEYWORD: ${{ inputs.keyword }}
           LIMIT: ${{ inputs.limit }}
           SEND: ${{ inputs.send }}
+          POSTS: ${{ inputs.posts }}
         run: |
-          args=(--keyword="$KEYWORD" --limit="$LIMIT")
+          args=(--keyword="$KEYWORD" --limit="$LIMIT" --posts="${POSTS:-25}")
           [[ "$SEND" == "true" ]] && args+=(--send)
           node src/dm.js "${args[@]}"
 

@@ -217,8 +217,15 @@ async function resolveMe() {
   );
   const page = (pages.data || []).find((p) => p.instagram_business_account);
   if (!page) {
+    /* Называем, что именно вернулось: пустой список Страниц и список без
+       Instagram — разные болезни. Первая лечится правом pages_show_list,
+       вторая означает, что профиль просто не связан со Страницей и весь
+       путь через Facebook для этого аккаунта не работает. */
+    const seen = (pages.data || []).map((p) => `${p.name || '?'} (${p.id})`);
     throw new Error(
-      'к этому токену не привязан Instagram-аккаунт: проверьте, что Страница связана с профилем и что выданы права pages_show_list и instagram_basic'
+      seen.length
+        ? `Страницы видны, но ни к одной не привязан Instagram: ${seen.join(', ')}`
+        : 'токен не видит ни одной Страницы: либо не выдано pages_show_list, либо Страниц у аккаунта нет'
     );
   }
   CFG.pageId = CFG.pageId || page.id;

@@ -23,6 +23,10 @@ on:
         description: Сколько постов проверять с конца ленты
         type: string
         default: '25'
+      debug:
+        description: Показать сырой ответ API по первому посту с комментариями
+        type: boolean
+        default: false
 
 concurrency:
   group: dm
@@ -54,9 +58,11 @@ jobs:
           LIMIT: ${{ inputs.limit }}
           SEND: ${{ inputs.send }}
           POSTS: ${{ inputs.posts }}
+          DEBUG: ${{ inputs.debug }}
         run: |
           args=(--keyword="$KEYWORD" --limit="$LIMIT" --posts="${POSTS:-25}")
           [[ "$SEND" == "true" ]] && args+=(--send)
+          [[ "$DEBUG" == "true" ]] && args+=(--debug)
           node src/dm.js "${args[@]}"
 
       - name: Отчёт по очереди

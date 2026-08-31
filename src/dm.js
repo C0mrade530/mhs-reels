@@ -332,6 +332,41 @@ async function main() {
   const media = await fetchMedia(CFG.posts);
   console.log(c.dim(`  постов проверяем: ${media.length}`));
 
+  /* Пустой ответ без ошибки — худший вид поломки: непонятно, чего не хватает.
+     Показываем сырой ответ по первому посту с комментариями, пробуя поля от
+     самых простых к нашим рабочим: так видно, на каком именно поле обрывается. */
+  if (has('--debug')) {
+    const m = media.find((x) => Number(x.comments_count || 0) > 0);
+    if (!m) {
+      console.log(c.warn('  Постов с комментариями не нашлось — отлаживать нечего.'));
+    } else {
+      line();
+      console.log(c.b(`  Отладка на посте ${m.id} (${m.comments_count} комментариев)`));
+      for (const fields of ['id', 'id,text', 'id,text,username,timestamp', 'id,text,username,timestamp,replies{id,text,username,timestamp}']) {
+        const url = API(`${m.id}/comments?fields=${fields}&limit=5&access_token=${encodeURIComponent(CFG.token)}`);
+        try {
+          const body = await call(url);
+          const n = (body.data || []).length;
+          console.log(`  ${n ? c.ok('✓') : c.warn('·')} fields=${fields}`);
+          console.log(c.dim(`      пришло ${n}: ${JSON.stringify(body).slice(0, 400)}`));
+        } catch (e) {
+          console.log(`  ${c.err('✗')} fields=${fields}`);
+          console.log(c.dim(`      ${e.message}`));
+        }
+      }
+      // Тот же пост целиком: вдруг дело не в комментариях, а в самом посте.
+      try {
+        const one = await call(
+          API(`${m.id}?fields=id,media_type,comments_count,permalink&access_token=${encodeURIComponent(CFG.token)}`)
+        );
+        console.log(c.dim(`  сам пост: ${JSON.stringify(one)}`));
+      } catch (e) {
+        console.log(c.dim(`  сам пост: ${e.message}`));
+      }
+      line();
+    }
+  }
+
   const state = loadState();
   const done = new Set(state.sent.map((s) => s.comment_id));
 

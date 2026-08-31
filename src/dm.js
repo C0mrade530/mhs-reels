@@ -380,16 +380,23 @@ async function main() {
          приложения и разрешения токена — разные вещи: первые лишь
          разрешают просить, вторые человек подтверждает на экране
          согласия. Проверяем вторые, а не первые. */
-      for (const host of [CFG.host, 'graph.facebook.com']) {
-        const u = `https://${host}/${CFG.version}/debug_token?input_token=${encodeURIComponent(CFG.token)}&access_token=${encodeURIComponent(CFG.token)}`;
+      /* Состав прав напрямую не прочитать — debug_token требует маркера
+         приложения. Поэтому стучимся в эндпоинты, закрытые нужными правами:
+         в отличие от комментариев, они при нехватке прав отвечают ошибкой,
+         а не пустым списком. Ошибка здесь и есть ответ. */
+      const probes = [
+        ['переписки (нужно manage_messages)', `me/conversations?fields=id&limit=1`],
+        ['своя личка (нужно manage_messages)', `me/conversations?platform=instagram&limit=1`],
+        ['упоминания (нужно manage_comments)', `${CFG.userId}?fields=mentioned_comment.comment_id(1)`],
+        ['базовое поле (право есть всегда)', `me?fields=id,username`],
+      ];
+      for (const [label, pathq] of probes) {
+        const sep = pathq.includes('?') ? '&' : '?';
         try {
-          const b = await call(u);
-          const d = b.data || {};
-          console.log(c.b(`  права токена (${host}):`));
-          console.log(`    ${(d.scopes || d.granular_scopes || []).length ? JSON.stringify(d.scopes || d.granular_scopes) : 'список не отдан'}`);
-          console.log(c.dim(`    тип ${d.type || '?'}, живой ${d.is_valid}, приложение ${d.app_id || '?'}`));
+          const b = await call(API(`${pathq}${sep}access_token=${encodeURIComponent(CFG.token)}`));
+          console.log(`  ${c.ok('✓')} ${label}: ${JSON.stringify(b).slice(0, 160)}`);
         } catch (e) {
-          console.log(c.dim(`  права токена (${host}): ${e.message}`));
+          console.log(`  ${c.err('✗')} ${label}: ${e.message}`);
         }
       }
 

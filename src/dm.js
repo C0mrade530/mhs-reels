@@ -191,12 +191,21 @@ async function resolveMe() {
     return body;
   }
 
-  const me = await call(
-    API(`me?fields=id,name,username,instagram_business_account{id,username}&access_token=${tok}`)
-  );
+  /* У маркера Страницы поле instagram_business_account есть, у маркера
+     пользователя его нет вовсе — и Graph отвечает не пустотой, а ошибкой
+     «нет такого поля». Поэтому спрашиваем осторожно: не вышло — значит
+     перед нами пользователь, и Instagram надо искать через его Страницы. */
+  let me = null;
+  try {
+    me = await call(
+      API(`me?fields=id,name,username,instagram_business_account{id,username}&access_token=${tok}`)
+    );
+  } catch {
+    me = null;
+  }
 
   // Токен Страницы: Instagram-аккаунт висит на ней полем.
-  if (me.instagram_business_account) {
+  if (me && me.instagram_business_account) {
     CFG.pageId = CFG.pageId || me.id;
     CFG.userId = CFG.userId || me.instagram_business_account.id;
     return me.instagram_business_account;

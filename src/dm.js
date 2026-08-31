@@ -363,7 +363,29 @@ async function main() {
   console.log(c.b(`  Комментарии со словом «${CFG.keywords.join('», «')}» → директ`));
   line();
 
-  const me = await resolveMe();
+  /* Отдельный токен для директа — вещь полезная, но хрупкая: его легко
+     подменить неподходящим (короткий маркер из Explorer, токен от другой
+     схемы входа). Тогда падать целиком незачем — у нас есть рабочий токен
+     публикации. Откатываемся на него и говорим об этом громко, чтобы
+     подмена не осталась незамеченной. */
+  let me;
+  try {
+    me = await resolveMe();
+  } catch (e) {
+    const fallback = process.env.IG_ACCESS_TOKEN;
+    if (!fallback || fallback === CFG.token) throw e;
+    console.log(c.warn(`  IG_DM_TOKEN не работает: ${e.message}`));
+    console.log(c.warn('  Откатываюсь на IG_ACCESS_TOKEN. Почините или удалите IG_DM_TOKEN.'));
+    CFG.token = fallback;
+    CFG.userId = process.env.IG_USER_ID || null;
+    CFG.pageId = process.env.PAGE_ID || null;
+    CFG.host = process.env.GRAPH_HOST
+      ? process.env.GRAPH_HOST.replace(/^https?:\/\//, '')
+      : fallback.startsWith('IGAA')
+        ? 'graph.instagram.com'
+        : 'graph.facebook.com';
+    me = await resolveMe();
+  }
   console.log(
     c.dim(
       `  аккаунт: ${me.username ? '@' + me.username : me.id}  ·  ${CFG.host}` +

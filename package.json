@@ -18,7 +18,9 @@
     "carousel": "node src/render-carousel.js",
     "carousel:themes": "node src/render-carousel.js --themes",
     "youtube": "node src/youtube.js",
-    "youtube:auth": "node src/youtube-auth.js"
+    "youtube:auth": "node src/youtube-auth.js",
+    "dm:scan": "node src/dm.js",
+    "dm": "node src/dm.js"
   },
   "dependencies": {
     "playwright": "^1.56.0"
